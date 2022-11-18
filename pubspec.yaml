@@ -1,7 +1,7 @@
 name: very_commons
 description: Common classes for very libraries
 version: 0.1.0
-homepage: 
+repository: https://github.com/akurnaz/very_commons
 
 environment:
   sdk: '>=2.18.4 <3.0.0'
