@@ -77,17 +77,14 @@ class SliceImpl<T> extends Chunk<T> {
   final bool _hasNext;
 
   SliceImpl({required super.content, required super.pageable, required bool hasNext})
-      : _hasNext = hasNext;
+    : _hasNext = hasNext;
 
   @override
   bool hasNext() => _hasNext;
 
   @override
-  Slice<U> map<U>(U Function(T e) toElement) => SliceImpl<U>(
-        content: getConvertedContent(toElement),
-        pageable: _pageable,
-        hasNext: _hasNext,
-      );
+  Slice<U> map<U>(U Function(T e) toElement) =>
+      SliceImpl<U>(content: getConvertedContent(toElement), pageable: _pageable, hasNext: _hasNext);
 }
 
 abstract class Page<T> extends Slice<T> {
@@ -107,7 +104,7 @@ class PageImpl<T> extends Chunk<T> implements Page<T> {
   late final int _total;
 
   PageImpl({required List<T> content, required Pageable pageable, required int total})
-      : super(content: content, pageable: pageable) {
+    : super(content: content, pageable: pageable) {
     if (content.isNotEmpty && pageable.offset + pageable.size > total) {
       _total = pageable.offset + content.length;
     } else {
@@ -128,9 +125,6 @@ class PageImpl<T> extends Chunk<T> implements Page<T> {
   bool isLast() => !hasNext();
 
   @override
-  Page<U> map<U>(U Function(T e) toElement) => PageImpl<U>(
-        content: getConvertedContent(toElement),
-        pageable: _pageable,
-        total: _total,
-      );
+  Page<U> map<U>(U Function(T e) toElement) =>
+      PageImpl<U>(content: getConvertedContent(toElement), pageable: _pageable, total: _total);
 }
