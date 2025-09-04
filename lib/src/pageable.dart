@@ -30,15 +30,9 @@ class PageRequest implements Pageable {
   @override
   final Sort sort;
 
-  PageRequest({required this.page, required this.size, required this.sort}) {
-    if (page < 0) {
-      throw ArgumentError("Page index must not be less than zero!");
-    }
-
-    if (size < 1) {
-      throw ArgumentError("Page size must not be less than one!");
-    }
-  }
+  const PageRequest({required this.page, required this.size, required this.sort})
+    : assert(page >= 0, "Page index must not be less than zero!"),
+      assert(size >= 1, "Page size must not be less than one!");
 
   @override
   int get offset => page * size;
