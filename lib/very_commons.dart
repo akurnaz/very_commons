@@ -1,4 +1,4 @@
-library very_commons;
+library;
 
 export 'src/order.dart';
 export 'src/pageable.dart';
