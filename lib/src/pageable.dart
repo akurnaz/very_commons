@@ -1,4 +1,4 @@
-import 'order.dart';
+import 'sort.dart';
 
 abstract class Pageable {
   int get page;

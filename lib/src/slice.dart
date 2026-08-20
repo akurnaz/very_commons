@@ -1,5 +1,5 @@
-import 'order.dart';
 import 'pageable.dart';
+import 'sort.dart';
 
 abstract class Slice<T> {
   int get number;
