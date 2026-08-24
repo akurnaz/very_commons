@@ -4,10 +4,10 @@ enum Direction {
   desc;
 
   /// Returns whether the direction is ascending.
-  bool get isAscending => this == Direction.asc;
+  bool get isAscending => this == .asc;
 
   /// Returns whether the direction is descending.
-  bool get isDescending => this == Direction.desc;
+  bool get isDescending => this == .desc;
 
   /// Returns the [Direction] enum for the given [String] value (case-insensitive).
   ///
@@ -16,11 +16,11 @@ enum Direction {
     final lower = value.trim().toLowerCase();
 
     if (lower == 'asc') {
-      return Direction.asc;
+      return .asc;
     }
 
     if (lower == 'desc') {
-      return Direction.desc;
+      return .desc;
     }
 
     throw ArgumentError.value(
@@ -46,7 +46,7 @@ enum NullHandling {
 /// Property and [Direction] pairing used to define sorting criteria for a property.
 class Order {
   static const bool defaultIgnoreCase = false;
-  static const NullHandling defaultNullHandling = NullHandling.native;
+  static const NullHandling defaultNullHandling = .native;
 
   /// The property name to sort by.
   final String property;
@@ -71,21 +71,11 @@ class Order {
 
   /// Creates a new [Order] instance with [Direction.asc].
   const Order.asc(String property, {NullHandling? nullHandling, bool? isIgnoreCase})
-    : this(
-        property,
-        direction: Direction.asc,
-        isIgnoreCase: isIgnoreCase,
-        nullHandling: nullHandling,
-      );
+    : this(property, direction: .asc, isIgnoreCase: isIgnoreCase, nullHandling: nullHandling);
 
   /// Creates a new [Order] instance with [Direction.desc].
   const Order.desc(String property, {NullHandling? nullHandling, bool? isIgnoreCase})
-    : this(
-        property,
-        direction: Direction.desc,
-        isIgnoreCase: isIgnoreCase,
-        nullHandling: nullHandling,
-      );
+    : this(property, direction: .desc, isIgnoreCase: isIgnoreCase, nullHandling: nullHandling);
 
   /// Returns whether sorting for this property is ascending.
   bool get isAscending => direction.isAscending;
@@ -110,7 +100,7 @@ class Order {
 
   /// Returns a new [Order] with reversed [direction].
   Order reverse() {
-    return copyWith(direction: direction == Direction.asc ? Direction.desc : Direction.asc);
+    return copyWith(direction: direction == .asc ? .desc : .asc);
   }
 
   @override
@@ -131,7 +121,7 @@ class Order {
   String toString() {
     final buffer = StringBuffer('$property: ${direction.name}');
 
-    if (nullHandling != NullHandling.native) {
+    if (nullHandling != .native) {
       buffer.write(', ${nullHandling.name}');
     }
 

@@ -33,9 +33,7 @@ abstract class Chunk<T> implements Slice<T> {
   final List<T> _content;
   final Pageable _pageable;
 
-  const Chunk({required List<T> content, required Pageable pageable})
-    : _content = content,
-      _pageable = pageable;
+  const Chunk({required this._content, required this._pageable});
 
   @override
   int get number => _pageable.page;
@@ -76,8 +74,7 @@ abstract class Chunk<T> implements Slice<T> {
 class SliceImpl<T> extends Chunk<T> {
   final bool _hasNext;
 
-  const SliceImpl({required super.content, required super.pageable, required bool hasNext})
-    : _hasNext = hasNext;
+  const SliceImpl({required super.content, required super.pageable, required this._hasNext});
 
   @override
   bool hasNext() => _hasNext;

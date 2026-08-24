@@ -41,9 +41,9 @@ void main() {
       test('creates Order with custom values when provided', () {
         const order = Order(
           'name',
-          direction: Direction.desc,
+          direction: .desc,
           isIgnoreCase: true,
-          nullHandling: NullHandling.nullsFirst,
+          nullHandling: .nullsFirst,
         );
 
         expect(order.property, 'name');
@@ -93,18 +93,13 @@ void main() {
 
     group('copyWith()', () {
       test('creates a copy with updated properties', () {
-        const order = Order(
-          'name',
-          direction: Direction.asc,
-          isIgnoreCase: false,
-          nullHandling: NullHandling.native,
-        );
+        const order = Order('name', direction: .asc, isIgnoreCase: false, nullHandling: .native);
 
         final updated = order.copyWith(
           property: 'subtitle',
-          direction: Direction.desc,
+          direction: .desc,
           isIgnoreCase: true,
-          nullHandling: NullHandling.nullsFirst,
+          nullHandling: .nullsFirst,
         );
 
         expect(updated.property, 'subtitle');
@@ -114,12 +109,7 @@ void main() {
       });
 
       test('retains original values when properties are omitted', () {
-        const order = Order(
-          'name',
-          direction: Direction.asc,
-          isIgnoreCase: false,
-          nullHandling: NullHandling.native,
-        );
+        const order = Order('name', direction: .asc, isIgnoreCase: false, nullHandling: .native);
 
         final copy = order.copyWith();
 
@@ -142,12 +132,7 @@ void main() {
 
     group('operator == and hashCode', () {
       test('correctly evaluates equality and consistent hashCode', () {
-        const o1 = Order(
-          'name',
-          direction: Direction.asc,
-          isIgnoreCase: false,
-          nullHandling: NullHandling.native,
-        );
+        const o1 = Order('name', direction: .asc, isIgnoreCase: false, nullHandling: .native);
         final o2 = o1.copyWith();
 
         expect(o1, equals(o1));
@@ -163,19 +148,24 @@ void main() {
 
     group('toString()', () {
       test('returns formatted string', () {
-        expect(const Order.asc('name').toString(), 'name: asc');
-        expect(const Order.desc('name').toString(), 'name: desc');
         expect(
-          const Order.asc('name', nullHandling: NullHandling.nullsFirst).toString(),
+          const Order.asc('name', nullHandling: .native, isIgnoreCase: false).toString(),
+          'name: asc',
+        );
+        expect(
+          const Order.desc('name', nullHandling: .native, isIgnoreCase: false).toString(),
+          'name: desc',
+        );
+        expect(
+          const Order.asc('name', nullHandling: .nullsFirst, isIgnoreCase: false).toString(),
           'name: asc, nullsFirst',
         );
-        expect(const Order.asc('name', isIgnoreCase: true).toString(), 'name: asc, ignoring case');
         expect(
-          const Order.asc(
-            'name',
-            nullHandling: NullHandling.nullsFirst,
-            isIgnoreCase: true,
-          ).toString(),
+          const Order.asc('name', nullHandling: .native, isIgnoreCase: true).toString(),
+          'name: asc, ignoring case',
+        );
+        expect(
+          const Order.asc('name', nullHandling: .nullsFirst, isIgnoreCase: true).toString(),
           'name: asc, nullsFirst, ignoring case',
         );
       });
