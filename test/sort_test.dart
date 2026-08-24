@@ -181,4 +181,24 @@ void main() {
       });
     });
   });
+
+  group('Sort', () {
+    group('Sort.by()', () {
+      test('creates Sort with given orders', () {
+        final orders = [const Order.asc('name'), const Order.desc('createdAt')];
+        final sort = Sort.by(orders);
+
+        expect(sort.orders, orders);
+        expect(sort.orders.length, 2);
+        expect(sort.orders.first.property, 'name');
+        expect(sort.orders.last.property, 'createdAt');
+      });
+
+      test('creates Sort with empty orders list', () {
+        const sort = Sort.by([]);
+
+        expect(sort.orders, isEmpty);
+      });
+    });
+  });
 }
