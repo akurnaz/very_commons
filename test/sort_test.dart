@@ -22,4 +22,18 @@ void main() {
       expect(() => Direction.fromString('invalid'), throwsA(isA<ArgumentError>()));
     });
   });
+
+  group('Order', () {
+    test('asc creates an Order with Direction.asc', () {
+      const order = Order.asc('name');
+      expect(order.property, equals('name'));
+      expect(order.direction, equals(Direction.asc));
+    });
+
+    test('desc creates an Order with Direction.desc', () {
+      const order = Order.desc('createdAt');
+      expect(order.property, equals('createdAt'));
+      expect(order.direction, equals(Direction.desc));
+    });
+  });
 }
