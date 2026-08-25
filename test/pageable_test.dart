@@ -13,9 +13,9 @@ void main() {
       });
     });
 
-    group('Unpaged.sorted()', () {
+    group('Unpaged()', () {
       test('returns Unpaged.unsorted when no arguments provided', () {
-        final unpaged = Unpaged.sorted();
+        final unpaged = Unpaged();
 
         expect(unpaged, equals(Unpaged.unsorted));
         expect(identical(unpaged, Unpaged.unsorted), isTrue);
@@ -25,7 +25,7 @@ void main() {
       });
 
       test('returns Unpaged.unsorted when Sort.unsorted is provided', () {
-        final unpaged = Unpaged.sorted(Sort.unsorted);
+        final unpaged = Unpaged(Sort.unsorted);
 
         expect(unpaged, equals(Unpaged.unsorted));
         expect(identical(unpaged, Unpaged.unsorted), isTrue);
@@ -33,7 +33,7 @@ void main() {
 
       test('creates Unpaged with given sort when sort is sorted', () {
         final sort = Sort.by(['name']);
-        final unpaged = Unpaged.sorted(sort);
+        final unpaged = Unpaged(sort);
 
         expect(unpaged.sort, sort);
         expect(unpaged.isPaged, isFalse);
@@ -89,7 +89,7 @@ void main() {
       });
 
       test('sorted Unpaged also throws on pageNumber, pageSize, offset', () {
-        final unpaged = Unpaged.sorted(Sort.by(['name']));
+        final unpaged = Unpaged(Sort.by(['name']));
 
         expect(() => unpaged.pageNumber, throwsUnsupportedError);
         expect(() => unpaged.pageSize, throwsUnsupportedError);
@@ -102,7 +102,7 @@ void main() {
         const unpaged = Unpaged.unsorted;
         expect(unpaged.next(), same(unpaged));
 
-        final sortedUnpaged = Unpaged.sorted(Sort.by(['name']));
+        final sortedUnpaged = Unpaged(Sort.by(['name']));
         expect(sortedUnpaged.next(), same(sortedUnpaged));
       });
 
@@ -110,7 +110,7 @@ void main() {
         const unpaged = Unpaged.unsorted;
         expect(unpaged.previousOrFirst(), same(unpaged));
 
-        final sortedUnpaged = Unpaged.sorted(Sort.by(['name']));
+        final sortedUnpaged = Unpaged(Sort.by(['name']));
         expect(sortedUnpaged.previousOrFirst(), same(sortedUnpaged));
       });
 
@@ -118,7 +118,7 @@ void main() {
         const unpaged = Unpaged.unsorted;
         expect(unpaged.first(), same(unpaged));
 
-        final sortedUnpaged = Unpaged.sorted(Sort.by(['name']));
+        final sortedUnpaged = Unpaged(Sort.by(['name']));
         expect(sortedUnpaged.first(), same(sortedUnpaged));
       });
 
@@ -126,7 +126,7 @@ void main() {
         const unpaged = Unpaged.unsorted;
         expect(unpaged.withPage(0), same(unpaged));
 
-        final sortedUnpaged = Unpaged.sorted(Sort.by(['name']));
+        final sortedUnpaged = Unpaged(Sort.by(['name']));
         expect(sortedUnpaged.withPage(0), same(sortedUnpaged));
       });
 
@@ -157,7 +157,7 @@ void main() {
       });
 
       test('sorted Unpaged withPage() with non-zero throws', () {
-        final unpaged = Unpaged.sorted(Sort.by(['name']));
+        final unpaged = Unpaged(Sort.by(['name']));
 
         expect(
           () => unpaged.withPage(1),
@@ -186,7 +186,7 @@ void main() {
         const unpaged = Unpaged.unsorted;
         expect(unpaged.hasPrevious(), isFalse);
 
-        final sortedUnpaged = Unpaged.sorted(Sort.by(['name']));
+        final sortedUnpaged = Unpaged(Sort.by(['name']));
         expect(sortedUnpaged.hasPrevious(), isFalse);
       });
     });
@@ -197,9 +197,9 @@ void main() {
         final sort2 = Sort.by(['name']);
         final sort3 = Sort.by(['age']);
 
-        final unpaged1 = Unpaged.sorted(sort1);
-        final unpaged2 = Unpaged.sorted(sort2);
-        final unpaged3 = Unpaged.sorted(sort3);
+        final unpaged1 = Unpaged(sort1);
+        final unpaged2 = Unpaged(sort2);
+        final unpaged3 = Unpaged(sort3);
 
         expect(unpaged1 == unpaged1, isTrue);
         expect(unpaged1 == unpaged2, isTrue);
@@ -214,12 +214,12 @@ void main() {
     group('toString()', () {
       test('returns "unpaged" for unsorted instance', () {
         expect(Unpaged.unsorted.toString(), 'unpaged');
-        expect(Unpaged.sorted().toString(), 'unpaged');
+        expect(Unpaged().toString(), 'unpaged');
       });
 
       test('returns formatted string for sorted instance', () {
-        final unpaged = Unpaged.sorted(Sort.by(['name']));
-        expect(unpaged.toString(), 'Unpaged.sorted(name: asc)');
+        final unpaged = Unpaged(Sort.by(['name']));
+        expect(unpaged.toString(), 'Unpaged(name: asc)');
       });
     });
   });

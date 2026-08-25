@@ -17,7 +17,7 @@
 - Added `AbstractPageRequest` abstract class implementing common `Pageable` behavior.
 - Made `PageRequest` extend `AbstractPageRequest`.
 - Added `withSort` method and `toString` implementation to `PageRequest`.
-- Added `Unpaged` class implementing `Pageable` with `Unpaged.unsorted` constant and `Unpaged.sorted()` factory constructor.
+- Added `Unpaged` class implementing `Pageable` with `Unpaged.unsorted` constant and `Unpaged()` factory constructor.
 
 ## 0.2.0
 

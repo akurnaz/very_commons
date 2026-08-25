@@ -56,7 +56,7 @@ class Unpaged implements Pageable {
   const Unpaged._(this.sort);
 
   /// Returns an [Unpaged] instance with the given [sort] order.
-  factory Unpaged.sorted([Sort sort = Sort.unsorted]) {
+  factory Unpaged([Sort sort = Sort.unsorted]) {
     return sort.isSorted ? Unpaged._(sort) : unsorted;
   }
 
@@ -109,5 +109,5 @@ class Unpaged implements Pageable {
   int get hashCode => sort.hashCode;
 
   @override
-  String toString() => sort.isSorted ? 'Unpaged.sorted($sort)' : 'unpaged';
+  String toString() => sort.isSorted ? 'Unpaged($sort)' : 'unpaged';
 }
