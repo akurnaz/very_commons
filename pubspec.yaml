@@ -4,7 +4,7 @@ version: 0.2.0
 repository: https://github.com/akurnaz/very_commons
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.13.0
 
 dev_dependencies:
   lints: ^6.0.0
