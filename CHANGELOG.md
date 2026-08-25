@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Added `isAscending`, `isDescending` getters and `fromString` method to `Direction`.
+- Added `isAscending`, `isDescending` getters and `Direction.fromString` factory constructor to `Direction`.
 - Added `NullHandling` enum.
 - Added default constructor, `defaultDirection`, `defaultIgnoreCase`, `defaultNullHandling`, `isIgnoreCase`, `nullHandling`, `isAscending`, `isDescending`, `copyWith`, and `reverse` to `Order`.
 - Made `Sort` class extend `Iterable<Order>`.

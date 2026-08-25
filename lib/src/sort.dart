@@ -12,7 +12,7 @@ enum Direction {
   /// Returns the [Direction] enum for the given [String] value (case-insensitive).
   ///
   /// Throws an [ArgumentError] if the value is invalid.
-  static Direction fromString(String value) {
+  factory Direction.fromString(String value) {
     final lower = value.trim().toLowerCase();
 
     if (lower == 'asc') {
