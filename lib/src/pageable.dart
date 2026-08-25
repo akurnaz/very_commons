@@ -1,22 +1,7 @@
-import 'page_request.dart';
 import 'sort.dart';
 
 /// Abstract class for pagination information.
 abstract class Pageable {
-  /// Returns a [Pageable] instance representing no pagination setup.
-  ///
-  /// If [sort] is provided, returns an unpaged [Pageable] instance considering the given [sort] order.
-  factory Pageable.unpaged([Sort sort = Sort.unsorted]) {
-    return Unpaged.sorted(sort);
-  }
-
-  /// Creates a new [Pageable] for the first page (page number `0`) given [pageSize].
-  ///
-  /// [pageSize] must be greater than 0.
-  factory Pageable.ofSize(int pageSize) {
-    return PageRequest(pageNumber: 0, pageSize: pageSize);
-  }
-
   /// Returns whether the current [Pageable] contains pagination information.
   bool get isPaged;
 

@@ -2,49 +2,6 @@ import 'package:test/test.dart';
 import 'package:very_commons/very_commons.dart';
 
 void main() {
-  group('Pageable', () {
-    group('Pageable.unpaged()', () {
-      test('creates unpaged instance without sorting', () {
-        final pageable = Pageable.unpaged();
-
-        expect(pageable.isPaged, isFalse);
-        expect(pageable.isUnpaged, isTrue);
-        expect(pageable.sort, Sort.unsorted);
-        expect(pageable, equals(Unpaged.unsorted));
-        expect(identical(pageable, Unpaged.unsorted), isTrue);
-      });
-
-      test('creates unpaged instance with sorting', () {
-        final sort = Sort.by(['name']);
-        final pageable = Pageable.unpaged(sort);
-
-        expect(pageable.isPaged, isFalse);
-        expect(pageable.isUnpaged, isTrue);
-        expect(pageable.sort, sort);
-        expect(pageable, isA<Unpaged>());
-      });
-    });
-
-    group('Pageable.ofSize()', () {
-      test('creates PageRequest with page 0 and given pageSize', () {
-        final pageable = Pageable.ofSize(10);
-
-        expect(pageable.isPaged, isTrue);
-        expect(pageable.isUnpaged, isFalse);
-        expect(pageable.pageNumber, 0);
-        expect(pageable.pageSize, 10);
-        expect(pageable.offset, 0);
-        expect(pageable.sort, Sort.unsorted);
-        expect(pageable, isA<PageRequest>());
-      });
-
-      test('throws AssertionError when pageSize is less than 1', () {
-        expect(() => Pageable.ofSize(0), throwsA(isA<AssertionError>()));
-        expect(() => Pageable.ofSize(-1), throwsA(isA<AssertionError>()));
-      });
-    });
-  });
-
   group('Unpaged', () {
     group('Unpaged.unsorted', () {
       test('is const and has unsorted Sort', () {
