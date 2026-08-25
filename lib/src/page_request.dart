@@ -1,4 +1,5 @@
-import '../very_commons.dart';
+import 'pageable.dart';
+import 'sort.dart';
 
 class PageRequest implements Pageable {
   @override
