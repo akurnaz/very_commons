@@ -3,33 +3,43 @@ import 'sort.dart';
 
 class PageRequest implements Pageable {
   @override
-  final int page;
+  final int pageNumber;
 
   @override
-  final int size;
+  final int pageSize;
 
   @override
   final Sort sort;
 
-  const PageRequest({required this.page, required this.size, required this.sort})
-    : assert(page >= 0, "Page index must not be less than zero!"),
-      assert(size >= 1, "Page size must not be less than one!");
+  const PageRequest({required this.pageNumber, required this.pageSize, this.sort = Sort.unsorted})
+    : assert(pageNumber >= 0, "Page index must not be less than zero!"),
+      assert(pageSize >= 1, "Page size must not be less than one!");
 
   @override
-  int get offset => page * size;
+  bool get isPaged => true;
 
   @override
-  PageRequest next() => PageRequest(page: page + 1, size: size, sort: sort);
+  bool get isUnpaged => !isPaged;
 
   @override
-  PageRequest previous() => page == 0 ? this : PageRequest(page: page - 1, size: size, sort: sort);
+  int get offset => pageNumber * pageSize;
 
   @override
-  PageRequest first() => PageRequest(page: 0, size: size, sort: sort);
+  PageRequest next() => PageRequest(pageNumber: pageNumber + 1, pageSize: pageSize, sort: sort);
+
+  PageRequest previous() => pageNumber == 0
+      ? this
+      : PageRequest(pageNumber: pageNumber - 1, pageSize: pageSize, sort: sort);
 
   @override
-  Pageable withPage(int page) => PageRequest(page: page, size: size, sort: sort);
+  PageRequest previousOrFirst() => hasPrevious() ? previous() : first();
 
   @override
-  bool hasPrevious() => page > 0;
+  PageRequest first() => PageRequest(pageNumber: 0, pageSize: pageSize, sort: sort);
+
+  @override
+  Pageable withPage(int page) => PageRequest(pageNumber: page, pageSize: pageSize, sort: sort);
+
+  @override
+  bool hasPrevious() => pageNumber > 0;
 }

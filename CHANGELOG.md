@@ -10,6 +10,10 @@
 - Added `isSorted`, `isUnsorted` getters to `Sort`.
 - Added `descending`, `ascending`, `and`, `reverse`, and `getOrderFor` methods to `Sort`.
 - Added equality (`==`), `hashCode`, and `toString` implementations to `Sort`.
+- Added `isPaged` and `isUnpaged` getters, `Pageable.unpaged()`, and `Pageable.ofSize()` factory constructors to `Pageable`.
+- Renamed `page` to `pageNumber`, `size` to `pageSize`, and replaced `previous()` with `previousOrFirst()` in `Pageable`.
+- Made `sort` parameter optional in `PageRequest` constructor, defaulting to `Sort.unsorted`.
+- Added `Unpaged` class implementing `Pageable` with `Unpaged.unsorted` constant and `Unpaged.sorted()` factory constructor.
 
 ## 0.2.0
 
