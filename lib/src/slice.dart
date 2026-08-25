@@ -36,10 +36,10 @@ abstract class Chunk<T> implements Slice<T> {
   const Chunk({required this._content, required this._pageable});
 
   @override
-  int get number => _pageable.page;
+  int get number => _pageable.pageNumber;
 
   @override
-  int get size => _pageable.size;
+  int get size => _pageable.pageSize;
 
   @override
   int get numberOfElements => content.length;
@@ -66,7 +66,7 @@ abstract class Chunk<T> implements Slice<T> {
   Pageable? nextPageable() => hasNext() ? _pageable.next() : null;
 
   @override
-  Pageable? previousPageable() => hasPrevious() ? _pageable.previous() : null;
+  Pageable? previousPageable() => hasPrevious() ? _pageable.previousOrFirst() : null;
 
   List<U> getConvertedContent<U>(U Function(T e) toElement) => content.map(toElement).toList();
 }
@@ -102,7 +102,7 @@ class PageImpl<T> extends Chunk<T> implements Page<T> {
 
   PageImpl({required List<T> content, required Pageable pageable, required int total})
     : super(content: content, pageable: pageable) {
-    if (content.isNotEmpty && pageable.offset + pageable.size > total) {
+    if (content.isNotEmpty && pageable.offset + pageable.pageSize > total) {
       _total = pageable.offset + content.length;
     } else {
       _total = total;
