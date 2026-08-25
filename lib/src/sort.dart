@@ -45,6 +45,7 @@ enum NullHandling {
 
 /// Property and [Direction] pairing used to define sorting criteria for a property.
 class Order {
+  static const Direction defaultDirection = .asc;
   static const bool defaultIgnoreCase = false;
   static const NullHandling defaultNullHandling = .native;
 
@@ -64,7 +65,7 @@ class Order {
   ///
   /// [property] must not be empty.
   const Order(this.property, {Direction? direction, bool? isIgnoreCase, NullHandling? nullHandling})
-    : direction = direction ?? Sort.defaultDirection,
+    : direction = direction ?? defaultDirection,
       isIgnoreCase = isIgnoreCase ?? defaultIgnoreCase,
       nullHandling = nullHandling ?? defaultNullHandling,
       assert(property != '', 'Property must not be empty');
@@ -133,10 +134,89 @@ class Order {
   }
 }
 
-class Sort {
-  static const Direction defaultDirection = Direction.asc;
+/// Sort option for queries.
+class Sort extends Iterable<Order> {
+  /// Instance representing no sorting setup at all.
+  static const Sort unsorted = Sort._([]);
 
-  final List<Order> orders;
+  final List<Order> _orders;
 
-  const Sort.by(this.orders);
+  const Sort._(this._orders);
+
+  /// Creates a new [Sort] instance with given [orders].
+  factory Sort(List<Order> orders) {
+    return orders.isEmpty ? unsorted : Sort._(List.unmodifiable(orders));
+  }
+
+  /// Creates a new [Sort] for the given [properties] and optional [direction].
+  factory Sort.by(List<String> properties, {Direction? direction}) {
+    final orders = properties.map((property) => Order(property, direction: direction)).toList();
+
+    return Sort(orders);
+  }
+
+  /// Returns `true` if this Sort instance is sorted, `false` otherwise.
+  bool get isSorted => isNotEmpty;
+
+  /// Returns `true` if this Sort instance is unsorted, `false` otherwise.
+  bool get isUnsorted => !isSorted;
+
+  /// Returns a new [Sort] with the current setup but [Direction.desc].
+  Sort descending() => _withDirection(.desc);
+
+  /// Returns a new [Sort] with the current setup but [Direction.asc].
+  Sort ascending() => _withDirection(.asc);
+
+  /// Returns a new [Sort] consisting of the [Order]s of the current [Sort] combined with the given ones.
+  Sort and(Sort sort) {
+    if (sort.isEmpty) return this;
+    if (isEmpty) return sort;
+
+    return Sort([...this, ...sort]);
+  }
+
+  /// Returns a new [Sort] with reversed sort [Order]s turning ascending into descending and vice versa.
+  Sort reverse() {
+    return Sort(map((order) => order.reverse()).toList());
+  }
+
+  /// Returns the [Order] registered for the given [property], or `null` if not found.
+  Order? getOrderFor(String property) {
+    for (final order in this) {
+      if (order.property == property) {
+        return order;
+      }
+    }
+
+    return null;
+  }
+
+  Sort _withDirection(Direction direction) {
+    return Sort(map((order) => order.copyWith(direction: direction)).toList());
+  }
+
+  @override
+  Iterator<Order> get iterator => _orders.iterator;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Sort) return false;
+    if (_orders.length != other._orders.length) return false;
+
+    for (var i = 0; i < _orders.length; i++) {
+      if (_orders[i] != other._orders[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(_orders);
+
+  @override
+  String toString() {
+    return isEmpty ? 'unsorted' : _orders.join(', ');
+  }
 }
