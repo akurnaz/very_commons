@@ -20,6 +20,15 @@
 - Converted `next`, `previous`, `first`, `previousOrFirst`, and `hasPrevious` methods to getters in `AbstractPageRequest` and `PageRequest`.
 - Added `withSort` method and `toString` implementation to `PageRequest`.
 - Added `Unpaged` class implementing `Pageable` with `Unpaged.unsorted` constant and `Unpaged()` factory constructor.
+- Made `Slice` class extend `Iterable<T>`.
+- Converted `hasContent`, `isFirst`, `isLast`, `hasNext`, `hasPrevious`, `nextPageable`, and `previousPageable` methods to getters in `Slice`.
+- Added `pageable`, `nextOrLastPageable`, and `previousOrFirstPageable` getters to `Slice`.
+- Made `Chunk` class extend `Slice<T>` and implemented `iterator`.
+- Made `content` in `Chunk` unmodifiable using `List.unmodifiable`.
+- Added `getConvertedContent` method to `Chunk`.
+- Added equality (`==`) and `hashCode` implementations to `Chunk` and `SliceImpl`.
+- Made `pageable` parameter optional defaulting to `Unpaged.unsorted` and `hasNext` defaulting to `false` in `SliceImpl` constructor.
+- Added `toString` implementation to `SliceImpl`.
 
 ## 0.2.0
 
