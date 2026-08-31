@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 0.3.0
 
 - Added `isAscending`, `isDescending` getters and `Direction.fromString` factory constructor to `Direction`.
 - Added `NullHandling` enum.
