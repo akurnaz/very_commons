@@ -98,28 +98,28 @@ void main() {
     });
 
     group('navigation methods', () {
-      test('next() returns this', () {
+      test('next returns this', () {
         const unpaged = Unpaged.unsorted;
-        expect(unpaged.next(), same(unpaged));
+        expect(unpaged.next, same(unpaged));
 
         final sortedUnpaged = Unpaged(Sort.by(['name']));
-        expect(sortedUnpaged.next(), same(sortedUnpaged));
+        expect(sortedUnpaged.next, same(sortedUnpaged));
       });
 
-      test('previousOrFirst() returns this', () {
+      test('previousOrFirst returns this', () {
         const unpaged = Unpaged.unsorted;
-        expect(unpaged.previousOrFirst(), same(unpaged));
+        expect(unpaged.previousOrFirst, same(unpaged));
 
         final sortedUnpaged = Unpaged(Sort.by(['name']));
-        expect(sortedUnpaged.previousOrFirst(), same(sortedUnpaged));
+        expect(sortedUnpaged.previousOrFirst, same(sortedUnpaged));
       });
 
-      test('first() returns this', () {
+      test('first returns this', () {
         const unpaged = Unpaged.unsorted;
-        expect(unpaged.first(), same(unpaged));
+        expect(unpaged.first, same(unpaged));
 
         final sortedUnpaged = Unpaged(Sort.by(['name']));
-        expect(sortedUnpaged.first(), same(sortedUnpaged));
+        expect(sortedUnpaged.first, same(sortedUnpaged));
       });
 
       test('withPage(0) returns this', () {
@@ -182,12 +182,12 @@ void main() {
         );
       });
 
-      test('hasPrevious() returns false', () {
+      test('hasPrevious returns false', () {
         const unpaged = Unpaged.unsorted;
-        expect(unpaged.hasPrevious(), isFalse);
+        expect(unpaged.hasPrevious, isFalse);
 
         final sortedUnpaged = Unpaged(Sort.by(['name']));
-        expect(sortedUnpaged.hasPrevious(), isFalse);
+        expect(sortedUnpaged.hasPrevious, isFalse);
       });
     });
 

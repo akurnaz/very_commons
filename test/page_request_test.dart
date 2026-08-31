@@ -14,15 +14,16 @@ class _TestPageRequest extends AbstractPageRequest {
   Sort get sort => _sort;
 
   @override
-  Pageable next() => _TestPageRequest(pageNumber: pageNumber + 1, pageSize: pageSize, sort: _sort);
+  Pageable get next =>
+      _TestPageRequest(pageNumber: pageNumber + 1, pageSize: pageSize, sort: _sort);
 
   @override
-  Pageable previous() => pageNumber == 0
+  Pageable get previous => pageNumber == 0
       ? this
       : _TestPageRequest(pageNumber: pageNumber - 1, pageSize: pageSize, sort: _sort);
 
   @override
-  Pageable first() => _TestPageRequest(pageNumber: 0, pageSize: pageSize, sort: _sort);
+  Pageable get first => _TestPageRequest(pageNumber: 0, pageSize: pageSize, sort: _sort);
 
   @override
   Pageable withPage(int pageNumber) =>
@@ -94,31 +95,31 @@ void main() {
       });
     });
 
-    group('hasPrevious()', () {
+    group('hasPrevious', () {
       test('returns false when pageNumber is 0', () {
         const request = _TestPageRequest(pageNumber: 0, pageSize: 10);
-        expect(request.hasPrevious(), isFalse);
+        expect(request.hasPrevious, isFalse);
       });
 
       test('returns true when pageNumber is greater than 0', () {
         const request = _TestPageRequest(pageNumber: 1, pageSize: 10);
-        expect(request.hasPrevious(), isTrue);
+        expect(request.hasPrevious, isTrue);
 
         const request2 = _TestPageRequest(pageNumber: 5, pageSize: 10);
-        expect(request2.hasPrevious(), isTrue);
+        expect(request2.hasPrevious, isTrue);
       });
     });
 
-    group('previousOrFirst()', () {
-      test('returns first() when hasPrevious() is false', () {
+    group('previousOrFirst', () {
+      test('returns first when hasPrevious is false', () {
         const request = _TestPageRequest(pageNumber: 0, pageSize: 10);
-        final result = request.previousOrFirst();
+        final result = request.previousOrFirst;
         expect(result.pageNumber, 0);
       });
 
-      test('returns previous() when hasPrevious() is true', () {
+      test('returns previous when hasPrevious is true', () {
         const request = _TestPageRequest(pageNumber: 2, pageSize: 10);
-        final result = request.previousOrFirst();
+        final result = request.previousOrFirst;
         expect(result.pageNumber, 1);
       });
     });
@@ -193,7 +194,7 @@ void main() {
       test('returns PageRequest for the next page with same pageSize and sort', () {
         final sort = Sort.by(['name']);
         final request = PageRequest(pageNumber: 1, pageSize: 20, sort: sort);
-        final nextRequest = request.next();
+        final nextRequest = request.next;
 
         expect(nextRequest.pageNumber, 2);
         expect(nextRequest.pageSize, 20);
@@ -204,7 +205,7 @@ void main() {
     group('previous()', () {
       test('returns this when pageNumber is 0', () {
         const request = PageRequest(pageNumber: 0, pageSize: 20);
-        final prevRequest = request.previous();
+        final prevRequest = request.previous;
 
         expect(prevRequest, same(request));
       });
@@ -212,7 +213,7 @@ void main() {
       test('returns PageRequest for the previous page when pageNumber > 0', () {
         final sort = Sort.by(['name']);
         final request = PageRequest(pageNumber: 2, pageSize: 20, sort: sort);
-        final prevRequest = request.previous();
+        final prevRequest = request.previous;
 
         expect(prevRequest.pageNumber, 1);
         expect(prevRequest.pageSize, 20);
@@ -224,7 +225,7 @@ void main() {
       test('returns PageRequest for the first page (0)', () {
         final sort = Sort.by(['name']);
         final request = PageRequest(pageNumber: 3, pageSize: 20, sort: sort);
-        final firstRequest = request.first();
+        final firstRequest = request.first;
 
         expect(firstRequest.pageNumber, 0);
         expect(firstRequest.pageSize, 20);
@@ -234,7 +235,7 @@ void main() {
       test('returns new PageRequest with pageNumber 0 when already on first page', () {
         final sort = Sort.by(['name']);
         final request = PageRequest(pageNumber: 0, pageSize: 20, sort: sort);
-        final firstRequest = request.first();
+        final firstRequest = request.first;
 
         expect(firstRequest.pageNumber, 0);
         expect(firstRequest.pageSize, 20);
@@ -246,14 +247,14 @@ void main() {
     group('previousOrFirst()', () {
       test('returns first page when on page 0', () {
         const request = PageRequest(pageNumber: 0, pageSize: 10);
-        final result = request.previousOrFirst();
+        final result = request.previousOrFirst;
 
         expect(result.pageNumber, 0);
       });
 
       test('returns previous page when on page > 0', () {
         const request = PageRequest(pageNumber: 2, pageSize: 10);
-        final result = request.previousOrFirst();
+        final result = request.previousOrFirst;
 
         expect(result.pageNumber, 1);
       });
