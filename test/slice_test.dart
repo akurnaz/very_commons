@@ -43,7 +43,7 @@ void main() {
           hasNext: true,
         );
 
-        expect(slice.number, equals(2)); 
+        expect(slice.number, equals(2));
         expect(slice.size, equals(5));
         expect(slice.numberOfElements, equals(5));
         expect(slice.hasContent, isTrue);
@@ -65,7 +65,7 @@ void main() {
 
     group('navigation methods', () {
       test('nextPageable returns next pageable when hasNext is true', () {
-        final pageable = PageRequest(pageNumber: 1, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 1, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: true);
 
         final next = slice.nextPageable;
@@ -75,14 +75,14 @@ void main() {
       });
 
       test('nextPageable returns Unpaged when hasNext is false', () {
-        final pageable = PageRequest(pageNumber: 1, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 1, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: false);
 
         expect(slice.nextPageable.isUnpaged, isTrue);
       });
 
       test('previousPageable returns previous pageable when hasPrevious is true', () {
-        final pageable = PageRequest(pageNumber: 2, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 2, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: false);
 
         final previous = slice.previousPageable;
@@ -92,35 +92,35 @@ void main() {
       });
 
       test('previousPageable returns Unpaged when hasPrevious is false', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: true);
 
         expect(slice.previousPageable.isUnpaged, isTrue);
       });
 
       test('nextOrLastPageable returns next pageable if hasNext is true', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: true);
 
         expect(slice.nextOrLastPageable.pageNumber, equals(1));
       });
 
       test('nextOrLastPageable returns current pageable if hasNext is false', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: false);
 
         expect(slice.nextOrLastPageable, equals(pageable));
       });
 
       test('previousOrFirstPageable returns previous pageable if hasPrevious is true', () {
-        final pageable = PageRequest(pageNumber: 3, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 3, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: false);
 
         expect(slice.previousOrFirstPageable.pageNumber, equals(2));
       });
 
       test('previousOrFirstPageable returns current pageable if hasPrevious is false', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 10);
         final slice = SliceImpl<int>(content: [1, 2], pageable: pageable, hasNext: true);
 
         expect(slice.previousOrFirstPageable, equals(pageable));
@@ -129,7 +129,7 @@ void main() {
 
     group('map()', () {
       test('transforms elements into a new SliceImpl preserving metadata', () {
-        final pageable = PageRequest(pageNumber: 1, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 1, pageSize: 5);
         final slice = SliceImpl<int>(content: [1, 2, 3], pageable: pageable, hasNext: true);
 
         final mapped = slice.map((e) => 'num_$e');
@@ -156,8 +156,8 @@ void main() {
 
     group('operator == and hashCode', () {
       test('correctly evaluates equality and consistent hashCode', () {
-        final pageable1 = PageRequest(pageNumber: 0, pageSize: 10);
-        final pageable2 = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable1 = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable2 = PageRequest(pageNumber: 0, pageSize: 10);
         final slice1 = SliceImpl<String>(content: ['a', 'b'], pageable: pageable1, hasNext: true);
         final slice2 = SliceImpl<String>(content: ['a', 'b'], pageable: pageable2, hasNext: true);
         final slice3 = SliceImpl<String>(content: ['a', 'c'], pageable: pageable1, hasNext: true);
@@ -173,7 +173,7 @@ void main() {
 
     group('toString()', () {
       test('returns formatted string representation', () {
-        final pageable = PageRequest(pageNumber: 2, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 2, pageSize: 5);
         final slice = SliceImpl<String>(content: ['hello', 'world'], pageable: pageable);
 
         expect(slice.toString(), equals('Slice 2 containing String instances'));

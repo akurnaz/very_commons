@@ -29,7 +29,7 @@ void main() {
       });
 
       test('paged constructor with empty content and 0 total yields 0 totalPages', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 10);
         final page = PageImpl<String>(content: [], pageable: pageable, total: 0);
 
         expect(page.content, isEmpty);
@@ -43,7 +43,7 @@ void main() {
       });
 
       test('calculates totalPages and navigation correctly across multiple pages', () {
-        final pageableFirst = PageRequest(pageNumber: 0, pageSize: 5);
+        const pageableFirst = PageRequest(pageNumber: 0, pageSize: 5);
         final pageFirst = PageImpl<int>(
           content: [1, 2, 3, 4, 5],
           pageable: pageableFirst,
@@ -60,7 +60,7 @@ void main() {
         expect(pageFirst.hasNext, isTrue);
         expect(pageFirst.hasPrevious, isFalse);
 
-        final pageableMiddle = PageRequest(pageNumber: 1, pageSize: 5);
+        const pageableMiddle = PageRequest(pageNumber: 1, pageSize: 5);
         final pageMiddle = PageImpl<int>(
           content: [6, 7, 8, 9, 10],
           pageable: pageableMiddle,
@@ -74,7 +74,7 @@ void main() {
         expect(pageMiddle.hasNext, isTrue);
         expect(pageMiddle.hasPrevious, isTrue);
 
-        final pageableLast = PageRequest(pageNumber: 2, pageSize: 5);
+        const pageableLast = PageRequest(pageNumber: 2, pageSize: 5);
         final pageLast = PageImpl<int>(
           content: [11, 12, 13, 14, 15],
           pageable: pageableLast,
@@ -90,7 +90,7 @@ void main() {
       });
 
       test('single page navigation properties', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 10);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 10);
         final page = PageImpl<int>(content: [1, 2, 3], pageable: pageable, total: 3);
 
         expect(page.totalPages, equals(1));
@@ -102,7 +102,7 @@ void main() {
 
       test('adapts total if offset + pageSize > total to mitigate inconsistencies', () {
         // offset is 10, pageSize is 5, but content size is 3 (total was given as 8, which is < offset + pageSize)
-        final pageable = PageRequest(pageNumber: 2, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 2, pageSize: 5);
         final page = PageImpl<int>(content: [11, 12, 13], pageable: pageable, total: 8);
 
         // 10 + 3 = 13
@@ -113,7 +113,7 @@ void main() {
       });
 
       test('retains total when total >= offset + pageSize', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 5);
         final page = PageImpl<int>(content: [1, 2, 3, 4, 5], pageable: pageable, total: 100);
 
         expect(page.totalElements, equals(100));
@@ -121,20 +121,20 @@ void main() {
       });
 
       test('slice navigation methods return expected pageable', () {
-        final pageable = PageRequest(pageNumber: 1, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 1, pageSize: 5);
         final page = PageImpl<int>(content: [6, 7, 8, 9, 10], pageable: pageable, total: 15);
 
-        expect(page.nextPageable, equals(PageRequest(pageNumber: 2, pageSize: 5)));
-        expect(page.previousPageable, equals(PageRequest(pageNumber: 0, pageSize: 5)));
-        expect(page.nextOrLastPageable, equals(PageRequest(pageNumber: 2, pageSize: 5)));
-        expect(page.previousOrFirstPageable, equals(PageRequest(pageNumber: 0, pageSize: 5)));
+        expect(page.nextPageable, equals(const PageRequest(pageNumber: 2, pageSize: 5)));
+        expect(page.previousPageable, equals(const PageRequest(pageNumber: 0, pageSize: 5)));
+        expect(page.nextOrLastPageable, equals(const PageRequest(pageNumber: 2, pageSize: 5)));
+        expect(page.previousOrFirstPageable, equals(const PageRequest(pageNumber: 0, pageSize: 5)));
 
-        final lastPageable = PageRequest(pageNumber: 2, pageSize: 5);
+        const lastPageable = PageRequest(pageNumber: 2, pageSize: 5);
         final lastPage = PageImpl<int>(content: [11, 12], pageable: lastPageable, total: 12);
         expect(lastPage.nextPageable, equals(Unpaged.unsorted));
         expect(lastPage.nextOrLastPageable, equals(lastPageable));
 
-        final firstPageable = PageRequest(pageNumber: 0, pageSize: 5);
+        const firstPageable = PageRequest(pageNumber: 0, pageSize: 5);
         final firstPage = PageImpl<int>(content: [1, 2, 3], pageable: firstPageable, total: 12);
         expect(firstPage.previousPageable, equals(Unpaged.unsorted));
         expect(firstPage.previousOrFirstPageable, equals(firstPageable));
@@ -151,7 +151,7 @@ void main() {
       });
 
       test('map() preserves total', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 5);
         final page = PageImpl<int>(content: [1, 2, 3], pageable: pageable, total: 10);
 
         final mapped = page.map((e) => 'num_$e');
@@ -161,7 +161,7 @@ void main() {
       });
 
       test('equality, hashCode and toString', () {
-        final pageable = PageRequest(pageNumber: 0, pageSize: 5);
+        const pageable = PageRequest(pageNumber: 0, pageSize: 5);
         final page1 = PageImpl<String>(content: ['a', 'b'], pageable: pageable, total: 10);
         final page2 = PageImpl<String>(content: ['a', 'b'], pageable: pageable, total: 10);
 
