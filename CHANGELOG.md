@@ -29,6 +29,9 @@
 - Added equality (`==`) and `hashCode` implementations to `Chunk` and `SliceImpl`.
 - Made `pageable` parameter optional defaulting to `Unpaged.unsorted` and `hasNext` defaulting to `false` in `SliceImpl` constructor.
 - Added `toString` implementation to `SliceImpl`.
+- Converted `hasNext` and `isLast` methods to getters in `PageImpl`.
+- Made `pageable` parameter optional defaulting to `Unpaged.unsorted` and `total` optional in `PageImpl` constructor.
+- Added equality (`==`), `hashCode`, and `toString` implementations to `PageImpl`.
 
 ## 0.2.0
 
