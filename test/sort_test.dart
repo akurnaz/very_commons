@@ -156,19 +156,19 @@ void main() {
       });
     });
 
-    group('reverse()', () {
+    group('reverse', () {
       test('returns new Order with reversed direction', () {
         const ascOrder = Order.asc('name');
-        expect(ascOrder.reverse().direction, Direction.desc);
+        expect(ascOrder.reverse.direction, Direction.desc);
 
         const descOrder = Order.desc('name');
-        expect(descOrder.reverse().direction, Direction.asc);
+        expect(descOrder.reverse.direction, Direction.asc);
       });
 
       test('preserves other fields when reversing', () {
         const order = Order('name', direction: .asc, isIgnoreCase: true, nullHandling: .nullsFirst);
 
-        final reversed = order.reverse();
+        final reversed = order.reverse;
 
         expect(reversed.property, order.property);
         expect(reversed.direction, Direction.desc);
@@ -310,14 +310,14 @@ void main() {
       });
     });
 
-    group('descending()', () {
+    group('descending', () {
       test('returns new Sort with all orders set to descending', () {
         final sort = Sort([
           const Order.asc('name', nullHandling: .nullsFirst, isIgnoreCase: true),
           const Order.desc('createdAt'),
         ]);
 
-        final descendingSort = sort.descending();
+        final descendingSort = sort.descending;
 
         expect(descendingSort.length, 2);
         expect(
@@ -328,18 +328,18 @@ void main() {
       });
 
       test('returns unsorted when called on unsorted Sort', () {
-        expect(Sort.unsorted.descending(), Sort.unsorted);
+        expect(Sort.unsorted.descending, Sort.unsorted);
       });
     });
 
-    group('ascending()', () {
+    group('ascending', () {
       test('returns new Sort with all orders set to ascending', () {
         final sort = Sort([
           const Order.desc('name', nullHandling: .nullsFirst, isIgnoreCase: true),
           const Order.asc('createdAt'),
         ]);
 
-        final ascendingSort = sort.ascending();
+        final ascendingSort = sort.ascending;
 
         expect(ascendingSort.length, 2);
         expect(
@@ -350,7 +350,7 @@ void main() {
       });
 
       test('returns unsorted when called on unsorted Sort', () {
-        expect(Sort.unsorted.ascending(), Sort.unsorted);
+        expect(Sort.unsorted.ascending, Sort.unsorted);
       });
     });
 
@@ -389,14 +389,14 @@ void main() {
       });
     });
 
-    group('reverse()', () {
+    group('reverse', () {
       test('returns new Sort with reversed order directions', () {
         final sort = Sort([
           const Order.asc('name', nullHandling: .nullsFirst, isIgnoreCase: true),
           const Order.desc('createdAt'),
         ]);
 
-        final reversed = sort.reverse();
+        final reversed = sort.reverse;
 
         expect(reversed.length, 2);
         expect(
@@ -407,7 +407,7 @@ void main() {
       });
 
       test('returns unsorted when called on unsorted Sort', () {
-        expect(Sort.unsorted.reverse(), Sort.unsorted);
+        expect(Sort.unsorted.reverse, Sort.unsorted);
       });
     });
 

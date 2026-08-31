@@ -7,8 +7,8 @@
 - Added default constructor, `defaultDirection`, `defaultIgnoreCase`, `defaultNullHandling`, `isIgnoreCase`, `nullHandling`, `isAscending`, `isDescending`, `copyWith`, and `reverse` to `Order`.
 - Made `Sort` class extend `Iterable<Order>`.
 - Added `unsorted` constant, `Sort()` factory constructor, and `Sort.by()` constructor to `Sort`.
-- Added `isSorted`, `isUnsorted` getters to `Sort`.
-- Added `descending`, `ascending`, `and`, `reverse`, and `getOrderFor` methods to `Sort`.
+- Added `isSorted`, `isUnsorted`, `descending`, `ascending`, and `reverse` getters to `Sort`.
+- Added `and` and `getOrderFor` methods to `Sort`.
 - Added equality (`==`), `hashCode`, and `toString` implementations to `Sort`.
 - Added `isPaged` and `isUnpaged` getters to `Pageable`.
 - Renamed `page` to `pageNumber`, `size` to `pageSize`, and replaced `previous()` with `previousOrFirst()` in `Pageable`.
