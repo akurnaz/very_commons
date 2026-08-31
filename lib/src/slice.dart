@@ -1,127 +1,161 @@
+import 'page_request.dart';
 import 'pageable.dart';
 import 'sort.dart';
 
-abstract class Slice<T> {
+/// A slice of data that indicates whether there's a next or previous slice available.
+/// Allows to obtain a [Pageable] to request a previous or next [Slice].
+abstract class Slice<T> extends Iterable<T> {
+  /// Returns the number of the current [Slice]. Is always non-negative.
   int get number;
 
+  /// Returns the size of the [Slice].
   int get size;
 
+  /// Returns the number of elements currently on this [Slice].
   int get numberOfElements;
 
+  /// Returns the page content as [List].
   List<T> get content;
 
-  bool hasContent();
+  /// Returns whether the [Slice] has content at all.
+  bool get hasContent;
 
+  /// Returns the sorting parameters for the [Slice].
   Sort get sort;
 
-  bool isFirst();
+  /// Returns whether the current [Slice] is the first one.
+  bool get isFirst;
 
-  bool isLast();
+  /// Returns whether the current [Slice] is the last one.
+  bool get isLast;
 
-  bool hasNext();
+  /// Returns if there is a next [Slice].
+  bool get hasNext;
 
-  bool hasPrevious();
+  /// Returns if there is a previous [Slice].
+  bool get hasPrevious;
 
-  Pageable? nextPageable();
+  /// Returns the [Pageable] that's been used to request the current [Slice].
+  Pageable get pageable => PageRequest(pageNumber: number, pageSize: size, sort: sort);
 
-  Pageable? previousPageable();
+  /// Returns the [Pageable] to request the next [Slice]. Can be [Unpaged] in case the
+  /// current [Slice] is already the last one. Clients should check [hasNext] before calling this method.
+  Pageable get nextPageable;
 
+  /// Returns the [Pageable] to request the previous [Slice]. Can be [Unpaged] in case the
+  /// current [Slice] is already the first one. Clients should check [hasPrevious] before calling this method.
+  Pageable get previousPageable;
+
+  /// Returns the [Pageable] describing the next slice or the one describing the current slice in case it's the
+  /// last one.
+  Pageable get nextOrLastPageable => hasNext ? nextPageable : pageable;
+
+  /// Returns the [Pageable] describing the previous slice or the one describing the current slice in case it's the
+  /// first one.
+  Pageable get previousOrFirstPageable => hasPrevious ? previousPageable : pageable;
+
+  /// Returns a new [Slice] with the content of the current one mapped by the given [toElement].
+  @override
   Slice<U> map<U>(U Function(T e) toElement);
 }
 
-abstract class Chunk<T> implements Slice<T> {
-  final List<T> _content;
-  final Pageable _pageable;
-
-  const Chunk({required this._content, required this._pageable});
+/// Abstract basis for [Slice] implementations.
+abstract class Chunk<T> extends Slice<T> {
+  @override
+  final List<T> content;
 
   @override
-  int get number => _pageable.pageNumber;
+  final Pageable pageable;
+
+  /// Creates a new [Chunk] with given [content] and [pageable].
+  Chunk({required List<T> content, required this.pageable}) : content = List.unmodifiable(content);
 
   @override
-  int get size => _pageable.pageSize;
+  int get number => pageable.isPaged ? pageable.pageNumber : 0;
+
+  @override
+  int get size => pageable.isPaged ? pageable.pageSize : content.length;
 
   @override
   int get numberOfElements => content.length;
 
   @override
-  List<T> get content => _content;
+  bool get hasPrevious => number > 0;
 
   @override
-  bool hasContent() => content.isNotEmpty;
+  bool get isFirst => !hasPrevious;
 
   @override
-  Sort get sort => _pageable.sort;
+  bool get isLast => !hasNext;
 
   @override
-  bool isFirst() => !hasPrevious();
+  Pageable get nextPageable => hasNext ? pageable.next : Unpaged.unsorted;
 
   @override
-  bool isLast() => !hasNext();
+  Pageable get previousPageable => hasPrevious ? pageable.previousOrFirst : Unpaged.unsorted;
 
   @override
-  bool hasPrevious() => number > 0;
+  bool get hasContent => content.isNotEmpty;
 
   @override
-  Pageable? nextPageable() => hasNext() ? _pageable.next() : null;
+  Sort get sort => pageable.sort;
 
   @override
-  Pageable? previousPageable() => hasPrevious() ? _pageable.previousOrFirst() : null;
+  Iterator<T> get iterator => content.iterator;
 
+  /// Applies the given [toElement] function to the content of this [Chunk].
   List<U> getConvertedContent<U>(U Function(T e) toElement) => content.map(toElement).toList();
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    if (other is! Chunk<T>) return false;
+
+    if (other.pageable != pageable) return false;
+    if (other.content.length != content.length) return false;
+
+    for (var i = 0; i < content.length; i++) {
+      if (other.content[i] != content[i]) return false;
+    }
+
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hash(pageable, Object.hashAll(content));
 }
 
+/// Default implementation of [Slice].
 class SliceImpl<T> extends Chunk<T> {
-  final bool _hasNext;
-
-  const SliceImpl({required super.content, required super.pageable, required this._hasNext});
-
   @override
-  bool hasNext() => _hasNext;
+  final bool hasNext;
+
+  /// Creates a new [SliceImpl] with the given [content], [pageable] and [hasNext].
+  SliceImpl({required super.content, super.pageable = Unpaged.unsorted, this.hasNext = false});
 
   @override
   Slice<U> map<U>(U Function(T e) toElement) =>
-      SliceImpl<U>(content: getConvertedContent(toElement), pageable: _pageable, hasNext: _hasNext);
-}
+      SliceImpl<U>(content: getConvertedContent(toElement), pageable: pageable, hasNext: hasNext);
 
-abstract class Page<T> extends Slice<T> {
-  int get totalPages;
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
 
-  int get totalElements;
-
-  factory Page.empty(Pageable pageable) {
-    return PageImpl<T>(content: [], pageable: pageable, total: 0);
+    return other is SliceImpl<T> && other.hasNext == hasNext && super == other;
   }
 
   @override
-  Page<U> map<U>(U Function(T e) toElement);
-}
+  int get hashCode => Object.hash(super.hashCode, hasNext);
 
-class PageImpl<T> extends Chunk<T> implements Page<T> {
-  late final int _total;
+  @override
+  String toString() {
+    var contentType = 'UNKNOWN';
 
-  PageImpl({required List<T> content, required Pageable pageable, required int total})
-    : super(content: content, pageable: pageable) {
-    if (content.isNotEmpty && pageable.offset + pageable.pageSize > total) {
-      _total = pageable.offset + content.length;
-    } else {
-      _total = total;
+    if (content.isNotEmpty && content.first != null) {
+      contentType = content.first.runtimeType.toString();
     }
+
+    return 'Slice $number containing $contentType instances';
   }
-
-  @override
-  int get totalPages => size == 0 ? 1 : (_total / size).ceil();
-
-  @override
-  int get totalElements => _total;
-
-  @override
-  bool hasNext() => number + 1 < totalPages;
-
-  @override
-  bool isLast() => !hasNext();
-
-  @override
-  Page<U> map<U>(U Function(T e) toElement) =>
-      PageImpl<U>(content: getConvertedContent(toElement), pageable: _pageable, total: _total);
 }

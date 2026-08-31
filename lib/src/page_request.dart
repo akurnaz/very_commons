@@ -28,19 +28,19 @@ abstract class AbstractPageRequest implements Pageable {
   int get offset => pageNumber * pageSize;
 
   @override
-  bool hasPrevious() => pageNumber > 0;
+  bool get hasPrevious => pageNumber > 0;
 
   @override
-  Pageable previousOrFirst() => hasPrevious() ? previous() : first();
+  Pageable get previousOrFirst => hasPrevious ? previous : first;
 
   @override
-  Pageable next();
+  Pageable get next;
 
   /// Returns the [Pageable] requesting the previous page.
-  Pageable previous();
+  Pageable get previous;
 
   @override
-  Pageable first();
+  Pageable get first;
 
   @override
   bool operator ==(Object other) {
@@ -68,15 +68,15 @@ class PageRequest extends AbstractPageRequest {
   const PageRequest({super.pageNumber = 0, required super.pageSize, this.sort = Sort.unsorted});
 
   @override
-  PageRequest next() => PageRequest(pageNumber: pageNumber + 1, pageSize: pageSize, sort: sort);
+  PageRequest get next => PageRequest(pageNumber: pageNumber + 1, pageSize: pageSize, sort: sort);
 
   @override
-  PageRequest previous() => pageNumber == 0
+  PageRequest get previous => pageNumber == 0
       ? this
       : PageRequest(pageNumber: pageNumber - 1, pageSize: pageSize, sort: sort);
 
   @override
-  PageRequest first() => PageRequest(pageNumber: 0, pageSize: pageSize, sort: sort);
+  PageRequest get first => PageRequest(pageNumber: 0, pageSize: pageSize, sort: sort);
 
   /// Creates a new [PageRequest] with [pageNumber] applied.
   @override

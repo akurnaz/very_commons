@@ -100,9 +100,7 @@ class Order {
   }
 
   /// Returns a new [Order] with reversed [direction].
-  Order reverse() {
-    return copyWith(direction: direction == .asc ? .desc : .asc);
-  }
+  Order get reverse => copyWith(direction: direction == .asc ? .desc : .asc);
 
   @override
   bool operator ==(Object other) {
@@ -162,10 +160,10 @@ class Sort extends Iterable<Order> {
   bool get isUnsorted => !isSorted;
 
   /// Returns a new [Sort] with the current setup but [Direction.desc].
-  Sort descending() => _withDirection(.desc);
+  Sort get descending => _withDirection(.desc);
 
   /// Returns a new [Sort] with the current setup but [Direction.asc].
-  Sort ascending() => _withDirection(.asc);
+  Sort get ascending => _withDirection(.asc);
 
   /// Returns a new [Sort] consisting of the [Order]s of the current [Sort] combined with the given ones.
   Sort and(Sort sort) {
@@ -176,9 +174,7 @@ class Sort extends Iterable<Order> {
   }
 
   /// Returns a new [Sort] with reversed sort [Order]s turning ascending into descending and vice versa.
-  Sort reverse() {
-    return Sort(map((order) => order.reverse()).toList());
-  }
+  Sort get reverse => Sort(map((order) => order.reverse).toList());
 
   /// Returns the [Order] registered for the given [property], or `null` if not found.
   Order? getOrderFor(String property) {

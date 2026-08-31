@@ -27,13 +27,13 @@ abstract class Pageable {
   Sort get sort;
 
   /// Returns the [Pageable] requesting the next page.
-  Pageable next();
+  Pageable get next;
 
   /// Returns the previous [Pageable] or the first [Pageable] if the current one already is the first one.
-  Pageable previousOrFirst();
+  Pageable get previousOrFirst;
 
   /// Returns the [Pageable] requesting the first page.
-  Pageable first();
+  Pageable get first;
 
   /// Creates a new [Pageable] with [pageNumber] applied.
   ///
@@ -43,7 +43,7 @@ abstract class Pageable {
   /// Returns whether there's a previous [Pageable] we can access from the current one.
   ///
   /// Will return `false` in case the current [Pageable] already refers to the first page.
-  bool hasPrevious();
+  bool get hasPrevious;
 }
 
 /// [Pageable] implementation to represent the absence of pagination information.
@@ -77,13 +77,13 @@ class Unpaged implements Pageable {
   int get offset => throw UnsupportedError('Instance of Unpaged does not support get offset');
 
   @override
-  Pageable next() => this;
+  Pageable get next => this;
 
   @override
-  Pageable previousOrFirst() => this;
+  Pageable get previousOrFirst => this;
 
   @override
-  Pageable first() => this;
+  Pageable get first => this;
 
   @override
   Pageable withPage(int pageNumber) {
@@ -97,7 +97,7 @@ class Unpaged implements Pageable {
   }
 
   @override
-  bool hasPrevious() => false;
+  bool get hasPrevious => false;
 
   @override
   bool operator ==(Object other) {
