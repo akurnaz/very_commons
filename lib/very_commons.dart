@@ -1,5 +1,6 @@
 library;
 
+export 'src/limit.dart';
 export 'src/page.dart';
 export 'src/page_request.dart';
 export 'src/pageable.dart';

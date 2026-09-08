@@ -1,3 +1,4 @@
+import 'limit.dart';
 import 'sort.dart';
 
 /// Abstract class for pagination information.
@@ -44,6 +45,10 @@ abstract class Pageable {
   ///
   /// Will return `false` in case the current [Pageable] already refers to the first page.
   bool get hasPrevious;
+
+  /// Returns a [Limit] from this pageable if the page request [isPaged] or
+  /// [Limit.unlimited] otherwise.
+  Limit get limit;
 }
 
 /// [Pageable] implementation to represent the absence of pagination information.
@@ -98,6 +103,9 @@ class Unpaged implements Pageable {
 
   @override
   bool get hasPrevious => false;
+
+  @override
+  Limit get limit => const Limit.unlimited();
 
   @override
   bool operator ==(Object other) {

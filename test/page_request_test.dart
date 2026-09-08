@@ -95,6 +95,32 @@ void main() {
       });
     });
 
+    group('limit', () {
+      test('returns Limit.of(pageSize)', () {
+        const request = _TestPageRequest(pageNumber: 0, pageSize: 10);
+
+        expect(request.limit, equals(const Limit.of(10)));
+        expect(request.limit.isLimited, isTrue);
+        expect(request.limit.isUnlimited, isFalse);
+        expect(request.limit.max, 10);
+      });
+
+      test('reflects different pageSize in limit', () {
+        const request = _TestPageRequest(pageNumber: 2, pageSize: 25);
+
+        expect(request.limit, equals(const Limit.of(25)));
+        expect(request.limit.max, 25);
+      });
+
+      test('returns Limit.of(pageSize) through Pageable interface reference', () {
+        const Pageable pageable = _TestPageRequest(pageNumber: 1, pageSize: 15);
+
+        expect(pageable.limit, equals(const Limit.of(15)));
+        expect(pageable.limit.isLimited, isTrue);
+        expect(pageable.limit.max, 15);
+      });
+    });
+
     group('hasPrevious', () {
       test('returns false when pageNumber is 0', () {
         const request = _TestPageRequest(pageNumber: 0, pageSize: 10);
@@ -332,6 +358,25 @@ void main() {
       test('returns formatted string for sorted PageRequest', () {
         final request = PageRequest(pageNumber: 1, pageSize: 10, sort: Sort.by(['name']));
         expect(request.toString(), 'Page request [number: 1, size: 10, sort: name: asc]');
+      });
+    });
+
+    group('limit', () {
+      test('returns Limit.of(pageSize)', () {
+        const request = PageRequest(pageSize: 20);
+
+        expect(request.limit, equals(const Limit.of(20)));
+        expect(request.limit.isLimited, isTrue);
+        expect(request.limit.isUnlimited, isFalse);
+        expect(request.limit.max, 20);
+      });
+
+      test('returns Limit.of(pageSize) through Pageable interface reference', () {
+        const Pageable pageable = PageRequest(pageSize: 50);
+
+        expect(pageable.limit, equals(const Limit.of(50)));
+        expect(pageable.limit.isLimited, isTrue);
+        expect(pageable.limit.max, 50);
       });
     });
   });

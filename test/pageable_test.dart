@@ -191,6 +191,31 @@ void main() {
       });
     });
 
+    group('limit', () {
+      test('returns Limit.unlimited() for Unpaged.unsorted', () {
+        const unpaged = Unpaged.unsorted;
+
+        expect(unpaged.limit, equals(const Limit.unlimited()));
+        expect(unpaged.limit.isUnlimited, isTrue);
+        expect(unpaged.limit.isLimited, isFalse);
+      });
+
+      test('returns Limit.unlimited() for sorted Unpaged', () {
+        final unpaged = Unpaged(Sort.by(['name']));
+
+        expect(unpaged.limit, equals(const Limit.unlimited()));
+        expect(unpaged.limit.isUnlimited, isTrue);
+        expect(unpaged.limit.isLimited, isFalse);
+      });
+
+      test('returns Limit.unlimited() through Pageable interface reference', () {
+        final Pageable pageable = Unpaged();
+
+        expect(pageable.limit, equals(const Limit.unlimited()));
+        expect(pageable.limit.isUnlimited, isTrue);
+      });
+    });
+
     group('operator == and hashCode', () {
       test('correctly evaluates equality and consistent hashCode', () {
         final sort1 = Sort.by(['name']);

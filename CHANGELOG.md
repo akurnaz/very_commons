@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+- Added `Limit` sealed class with `Limit.unlimited()` and `Limit.of()` factory constructors.
+- Added `Limited` and `Unlimited` implementations of `Limit`.
+- Added `limit` getter to `Pageable`, `AbstractPageRequest`, and `Unpaged`.
+
 ## 0.3.0
 
 - Added `isAscending`, `isDescending` getters and `Direction.fromString` factory constructor to `Direction`.

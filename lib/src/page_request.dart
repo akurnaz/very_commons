@@ -1,3 +1,4 @@
+import 'limit.dart';
 import 'pageable.dart';
 import 'sort.dart';
 
@@ -33,14 +34,11 @@ abstract class AbstractPageRequest implements Pageable {
   @override
   Pageable get previousOrFirst => hasPrevious ? previous : first;
 
-  @override
-  Pageable get next;
-
   /// Returns the [Pageable] requesting the previous page.
   Pageable get previous;
 
   @override
-  Pageable get first;
+  Limit get limit => Limit.of(pageSize);
 
   @override
   bool operator ==(Object other) {
