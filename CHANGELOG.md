@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 0.4.0
 
 - Added `Limit` sealed class with `Limit.unlimited()` and `Limit.of()` factory constructors.
 - Added `Limited` and `Unlimited` implementations of `Limit`.
