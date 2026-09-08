@@ -238,8 +238,8 @@ void main() {
 
     group('toString()', () {
       test('returns "unpaged" for unsorted instance', () {
-        expect(Unpaged.unsorted.toString(), 'unpaged');
-        expect(Unpaged().toString(), 'unpaged');
+        expect(Unpaged.unsorted.toString(), 'Unpaged(unsorted)');
+        expect(Unpaged().toString(), 'Unpaged(unsorted)');
       });
 
       test('returns formatted string for sorted instance', () {

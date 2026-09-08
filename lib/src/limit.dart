@@ -56,13 +56,8 @@ final class Limited extends Limit {
 
 /// [Limit] implementation representing no limit.
 final class Unlimited extends Limit {
-  /// Singleton instance of [Unlimited].
-  static const Unlimited instance = Unlimited._();
-
-  const Unlimited._();
-
-  /// Returns an [Unlimited] instance.
-  const factory Unlimited() = Unlimited._;
+  /// Creates a new [Unlimited] instance.
+  const Unlimited();
 
   @override
   int get max => throw StateError(

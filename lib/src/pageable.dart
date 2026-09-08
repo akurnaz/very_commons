@@ -117,5 +117,5 @@ class Unpaged implements Pageable {
   int get hashCode => sort.hashCode;
 
   @override
-  String toString() => sort.isSorted ? 'Unpaged($sort)' : 'unpaged';
+  String toString() => 'Unpaged($sort)';
 }
