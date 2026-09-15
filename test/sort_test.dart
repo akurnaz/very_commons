@@ -235,12 +235,15 @@ void main() {
   group('Sort', () {
     group('Sort.unsorted', () {
       test('is empty and unsorted', () {
-        expect(Sort.unsorted.isEmpty, isTrue);
-        expect(Sort.unsorted.isNotEmpty, isFalse);
-        expect(Sort.unsorted.length, 0);
+        expect(Sort.unsorted.orders.isEmpty, isTrue);
+        expect(Sort.unsorted.orders.isNotEmpty, isFalse);
+        expect(Sort.unsorted.orders.length, 0);
         expect(Sort.unsorted.isSorted, isFalse);
         expect(Sort.unsorted.isUnsorted, isTrue);
-        expect(Sort.unsorted.toList(), isEmpty);
+      });
+
+      test('orders list is unmodifiable', () {
+        expect(() => Sort.unsorted.orders.add(const Order.asc('name')), throwsUnsupportedError);
       });
     });
 
@@ -249,10 +252,10 @@ void main() {
         final orders = [const Order.asc('name'), const Order.desc('createdAt')];
         final sort = Sort(orders);
 
-        expect(sort.length, 2);
-        expect(sort.first.property, 'name');
-        expect(sort.last.property, 'createdAt');
-        expect(sort.toList(), orders);
+        expect(sort.orders.length, 2);
+        expect(sort.orders.first.property, 'name');
+        expect(sort.orders.last.property, 'createdAt');
+        expect(sort.orders, orders);
       });
 
       test('returns Sort.unsorted when orders list is empty', () {
@@ -268,8 +271,8 @@ void main() {
 
         original.add(const Order.desc('createdAt'));
 
-        expect(sort.length, 1);
-        expect(sort.first.property, 'name');
+        expect(sort.orders.length, 1);
+        expect(sort.orders.first.property, 'name');
       });
     });
 
@@ -277,17 +280,17 @@ void main() {
       test('creates Sort with default direction', () {
         final sort = Sort.by(['name', 'createdAt']);
 
-        expect(sort.length, 2);
-        expect(sort.first, const Order('name'));
-        expect(sort.last, const Order('createdAt'));
+        expect(sort.orders.length, 2);
+        expect(sort.orders.first, const Order('name'));
+        expect(sort.orders.last, const Order('createdAt'));
       });
 
       test('creates Sort with specified direction', () {
         final sort = Sort.by(['name', 'createdAt'], direction: .desc);
 
-        expect(sort.length, 2);
-        expect(sort.first, const Order.desc('name'));
-        expect(sort.last, const Order.desc('createdAt'));
+        expect(sort.orders.length, 2);
+        expect(sort.orders.first, const Order.desc('name'));
+        expect(sort.orders.last, const Order.desc('createdAt'));
       });
 
       test('returns Sort.unsorted when properties list is empty', () {
@@ -319,12 +322,12 @@ void main() {
 
         final descendingSort = sort.descending;
 
-        expect(descendingSort.length, 2);
+        expect(descendingSort.orders.length, 2);
         expect(
-          descendingSort.first,
+          descendingSort.orders.first,
           const Order.desc('name', nullHandling: .nullsFirst, isIgnoreCase: true),
         );
-        expect(descendingSort.last, const Order.desc('createdAt'));
+        expect(descendingSort.orders.last, const Order.desc('createdAt'));
       });
 
       test('returns unsorted when called on unsorted Sort', () {
@@ -341,12 +344,12 @@ void main() {
 
         final ascendingSort = sort.ascending;
 
-        expect(ascendingSort.length, 2);
+        expect(ascendingSort.orders.length, 2);
         expect(
-          ascendingSort.first,
+          ascendingSort.orders.first,
           const Order.asc('name', nullHandling: .nullsFirst, isIgnoreCase: true),
         );
-        expect(ascendingSort.last, const Order.asc('createdAt'));
+        expect(ascendingSort.orders.last, const Order.asc('createdAt'));
       });
 
       test('returns unsorted when called on unsorted Sort', () {
@@ -361,8 +364,8 @@ void main() {
 
         final combined = sort1.and(sort2);
 
-        expect(combined.length, 3);
-        expect(combined.toList(), [
+        expect(combined.orders.length, 3);
+        expect(combined.orders, [
           const Order.asc('name'),
           const Order.desc('createdAt'),
           const Order.asc('age'),
@@ -398,12 +401,12 @@ void main() {
 
         final reversed = sort.reverse;
 
-        expect(reversed.length, 2);
+        expect(reversed.orders.length, 2);
         expect(
-          reversed.first,
+          reversed.orders.first,
           const Order.desc('name', nullHandling: .nullsFirst, isIgnoreCase: true),
         );
-        expect(reversed.last, const Order.asc('createdAt'));
+        expect(reversed.orders.last, const Order.asc('createdAt'));
       });
 
       test('returns unsorted when called on unsorted Sort', () {
@@ -433,27 +436,6 @@ void main() {
 
         expect(result, const Order.asc('name'));
         expect(result!.isAscending, isTrue);
-      });
-    });
-
-    group('iterator', () {
-      test('iterates over all orders and supports Iterable methods', () {
-        final orders = [
-          const Order.asc('name'),
-          const Order.desc('createdAt'),
-          const Order.asc('age'),
-        ];
-        final sort = Sort(orders);
-
-        expect(sort.map((o) => o.property).toList(), ['name', 'createdAt', 'age']);
-        expect(sort.where((o) => o.isAscending).length, 2);
-        expect(sort.any((o) => o.property == 'age'), isTrue);
-
-        final iterated = <Order>[];
-        for (final order in sort) {
-          iterated.add(order);
-        }
-        expect(iterated, orders);
       });
     });
 

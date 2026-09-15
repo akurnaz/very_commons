@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Removed `Iterable<Order>` inheritance from `Sort`.
+- Added `orders` property to `Sort`.
+
 ## 0.4.0
 
 - Added `Limit` sealed class with `Limit.unlimited()` and `Limit.of()` factory constructors.

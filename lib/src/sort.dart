@@ -133,13 +133,14 @@ class Order {
 }
 
 /// Sort option for queries.
-class Sort extends Iterable<Order> {
+class Sort {
   /// Instance representing no sorting setup at all.
   static const Sort unsorted = Sort._([]);
 
-  final List<Order> _orders;
+  /// The list of [Order]s.
+  final List<Order> orders;
 
-  const Sort._(this._orders);
+  const Sort._(this.orders);
 
   /// Creates a new [Sort] instance with given [orders].
   factory Sort(List<Order> orders) {
@@ -153,32 +154,32 @@ class Sort extends Iterable<Order> {
     return Sort(orders);
   }
 
-  /// Returns `true` if this Sort instance is sorted, `false` otherwise.
-  bool get isSorted => isNotEmpty;
-
-  /// Returns `true` if this Sort instance is unsorted, `false` otherwise.
-  bool get isUnsorted => !isSorted;
-
   /// Returns a new [Sort] with the current setup but [Direction.desc].
   Sort get descending => _withDirection(.desc);
 
   /// Returns a new [Sort] with the current setup but [Direction.asc].
   Sort get ascending => _withDirection(.asc);
 
+  /// Returns `true` if this Sort instance is sorted, `false` otherwise.
+  bool get isSorted => orders.isNotEmpty;
+
+  /// Returns `true` if this Sort instance is unsorted, `false` otherwise.
+  bool get isUnsorted => !isSorted;
+
   /// Returns a new [Sort] consisting of the [Order]s of the current [Sort] combined with the given ones.
   Sort and(Sort sort) {
-    if (sort.isEmpty) return this;
-    if (isEmpty) return sort;
+    if (sort.orders.isEmpty) return this;
+    if (orders.isEmpty) return sort;
 
-    return Sort([...this, ...sort]);
+    return Sort([...orders, ...sort.orders]);
   }
 
   /// Returns a new [Sort] with reversed sort [Order]s turning ascending into descending and vice versa.
-  Sort get reverse => Sort(map((order) => order.reverse).toList());
+  Sort get reverse => Sort(orders.map((order) => order.reverse).toList());
 
   /// Returns the [Order] registered for the given [property], or `null` if not found.
   Order? getOrderFor(String property) {
-    for (final order in this) {
+    for (final order in orders) {
       if (order.property == property) {
         return order;
       }
@@ -188,20 +189,17 @@ class Sort extends Iterable<Order> {
   }
 
   Sort _withDirection(Direction direction) {
-    return Sort(map((order) => order.copyWith(direction: direction)).toList());
+    return Sort(orders.map((order) => order.copyWith(direction: direction)).toList());
   }
-
-  @override
-  Iterator<Order> get iterator => _orders.iterator;
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Sort) return false;
-    if (_orders.length != other._orders.length) return false;
+    if (orders.length != other.orders.length) return false;
 
-    for (var i = 0; i < _orders.length; i++) {
-      if (_orders[i] != other._orders[i]) {
+    for (var i = 0; i < orders.length; i++) {
+      if (orders[i] != other.orders[i]) {
         return false;
       }
     }
@@ -209,10 +207,10 @@ class Sort extends Iterable<Order> {
   }
 
   @override
-  int get hashCode => Object.hashAll(_orders);
+  int get hashCode => Object.hashAll(orders);
 
   @override
   String toString() {
-    return isEmpty ? 'unsorted' : _orders.join(', ');
+    return isUnsorted ? 'unsorted' : orders.join(', ');
   }
 }
