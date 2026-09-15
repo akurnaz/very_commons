@@ -140,16 +140,6 @@ void main() {
         expect(firstPage.previousOrFirstPageable, equals(firstPageable));
       });
 
-      test('implements Iterable methods', () {
-        final page = PageImpl<int>(content: [10, 20, 30]);
-
-        expect(page.hasContent, isTrue);
-        expect(page.contains(20), isTrue);
-        expect(page.contains(99), isFalse);
-        expect(page.where((e) => e > 15).toList(), equals([20, 30]));
-        expect(page.iterator.moveNext(), isTrue);
-      });
-
       test('map() preserves total', () {
         const pageable = PageRequest(pageNumber: 0, pageSize: 5);
         final page = PageImpl<int>(content: [1, 2, 3], pageable: pageable, total: 10);

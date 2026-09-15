@@ -10,9 +10,9 @@ abstract class Page<T> extends Slice<T> {
   /// Returns the total amount of elements.
   int get totalElements;
 
-  /// Returns a new [Page] with the content of the current one mapped by the given [toElement].
+  /// Returns a new [Page] with the content of the current one mapped by the given [converter].
   @override
-  Page<U> map<U>(U Function(T e) toElement);
+  Page<U> map<U>(U Function(T e) converter);
 }
 
 /// Basic [Page] implementation.
@@ -51,8 +51,8 @@ class PageImpl<T> extends Chunk<T> implements Page<T> {
   bool get isLast => !hasNext;
 
   @override
-  Page<U> map<U>(U Function(T e) toElement) =>
-      PageImpl<U>(content: getConvertedContent(toElement), pageable: pageable, total: _total);
+  Page<U> map<U>(U Function(T e) converter) =>
+      PageImpl<U>(content: getConvertedContent(converter), pageable: pageable, total: _total);
 
   @override
   bool operator ==(Object other) {

@@ -142,18 +142,6 @@ void main() {
       });
     });
 
-    group('Iterable methods', () {
-      test('implements Iterable methods correctly', () {
-        final slice = SliceImpl<int>(content: [10, 20, 30]);
-
-        expect(slice.toList(), equals([10, 20, 30]));
-        expect(slice.where((x) => x > 15).toList(), equals([20, 30]));
-        expect(slice.fold<int>(0, (sum, x) => sum + x), equals(60));
-        expect(slice.first, equals(10));
-        expect(slice.last, equals(30));
-      });
-    });
-
     group('operator == and hashCode', () {
       test('correctly evaluates equality and consistent hashCode', () {
         const pageable1 = PageRequest(pageNumber: 0, pageSize: 10);

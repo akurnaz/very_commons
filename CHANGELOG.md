@@ -4,6 +4,8 @@
 
 - Removed `Iterable<Order>` inheritance from `Sort`.
 - Added `orders` property to `Sort`.
+- Removed `Iterable<T>` inheritance from `Slice`.
+- Removed `iterator` from `Chunk`.
 
 ## 0.4.0
 
