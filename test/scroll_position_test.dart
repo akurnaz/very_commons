@@ -249,4 +249,18 @@ void main() {
       });
     });
   });
+
+  group('ScrollDirection', () {
+    test('contains forward and backward values', () {
+      expect(
+        ScrollDirection.values,
+        containsAll([ScrollDirection.forward, ScrollDirection.backward]),
+      );
+    });
+
+    test('reverse toggles between forward and backward', () {
+      expect(ScrollDirection.forward.reverse, equals(ScrollDirection.backward));
+      expect(ScrollDirection.backward.reverse, equals(ScrollDirection.forward));
+    });
+  });
 }

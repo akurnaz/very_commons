@@ -1,3 +1,14 @@
+/// Keyset scrolling direction.
+enum ScrollDirection {
+  /// Forward (default) direction to scroll from the beginning of the results to their end.
+  forward,
+
+  /// Backward direction to scroll from the end of the results to their beginning.
+  backward;
+
+  ScrollDirection get reverse => this == forward ? backward : forward;
+}
+
 /// Interface to specify a position within a total query result. Scroll positions
 /// are used to start scrolling from the beginning of a query result or to resume
 /// scrolling from a given position within the query result.
