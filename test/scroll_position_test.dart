@@ -104,17 +104,18 @@ void main() {
     });
 
     group('positionFunction()', () {
-      test('returns OffsetPositionFunction.zero when startOffset is 0', () {
+      test('returns function producing OffsetScrollPosition with startOffset + offset', () {
         final fn = OffsetScrollPosition.positionFunction(0);
 
-        expect(fn, equals(OffsetPositionFunction.zero));
-        expect(fn.startOffset, equals(0));
+        expect(fn(0).offset, equals(0));
+        expect(fn(5).offset, equals(5));
       });
 
-      test('returns OffsetPositionFunction with startOffset when positive', () {
+      test('returns function with positive startOffset', () {
         final fn = OffsetScrollPosition.positionFunction(15);
 
-        expect(fn.startOffset, equals(15));
+        expect(fn(0).offset, equals(15));
+        expect(fn(5).offset, equals(20));
       });
 
       test('throws RangeError when startOffset is negative', () {
@@ -129,6 +130,21 @@ void main() {
           ),
         );
       });
+
+      test('returned function throws RangeError when offset is negative', () {
+        final fn = OffsetScrollPosition.positionFunction(10);
+
+        expect(
+          () => fn(-1),
+          throwsA(
+            isA<RangeError>().having(
+              (e) => e.message,
+              'message',
+              contains('Offset must not be negative'),
+            ),
+          ),
+        );
+      });
     });
 
     group('nextPositionFunction', () {
@@ -136,15 +152,16 @@ void main() {
         final position = OffsetScrollPosition.of(5);
         final nextFn = position.nextPositionFunction;
 
-        expect(nextFn.startOffset, equals(6));
+        expect(nextFn(0).offset, equals(6));
+        expect(nextFn(2).offset, equals(8));
       });
 
-      test('returns OffsetPositionFunction.zero for initial position', () {
+      test('returns position function starting at 0 for initial position', () {
         final initial = ScrollPosition.offset() as OffsetScrollPosition;
         final nextFn = initial.nextPositionFunction;
 
-        expect(nextFn, equals(OffsetPositionFunction.zero));
-        expect(nextFn.startOffset, equals(0));
+        expect(nextFn(0).offset, equals(0));
+        expect(nextFn(3).offset, equals(3));
       });
     });
 
@@ -229,73 +246,6 @@ void main() {
       test('returns formatted string for initial position', () {
         final initial = ScrollPosition.offset();
         expect(initial.toString(), equals('OffsetScrollPosition [-1]'));
-      });
-    });
-  });
-
-  group('OffsetPositionFunction', () {
-    group('constructor and constants', () {
-      test('creates instance with specified startOffset', () {
-        const fn = OffsetPositionFunction(10);
-        expect(fn.startOffset, equals(10));
-      });
-
-      test('OffsetPositionFunction.zero has startOffset 0', () {
-        expect(OffsetPositionFunction.zero.startOffset, equals(0));
-      });
-    });
-
-    group('apply()', () {
-      test('returns OffsetScrollPosition with startOffset + offset', () {
-        const fn = OffsetPositionFunction(10);
-        final position = fn.apply(5);
-
-        expect(position.offset, equals(15));
-        expect(position.isInitial, isFalse);
-      });
-
-      test('works with offset 0', () {
-        const fn = OffsetPositionFunction(7);
-        final position = fn.apply(0);
-
-        expect(position.offset, equals(7));
-      });
-
-      test('throws RangeError when offset is negative', () {
-        const fn = OffsetPositionFunction(10);
-
-        expect(
-          () => fn.apply(-1),
-          throwsA(
-            isA<RangeError>().having(
-              (e) => e.message,
-              'message',
-              contains('Offset must not be negative'),
-            ),
-          ),
-        );
-      });
-    });
-
-    group('operator == and hashCode', () {
-      test('correctly evaluates equality and consistent hashCode', () {
-        const fn1 = OffsetPositionFunction(5);
-        const fn2 = OffsetPositionFunction(5);
-        const fn3 = OffsetPositionFunction(10);
-
-        expect(fn1 == fn1, isTrue);
-        expect(fn1 == fn2, isTrue);
-        expect(fn1.hashCode, equals(fn2.hashCode));
-
-        expect(fn1 == fn3, isFalse);
-        expect(fn1 == Object(), isFalse);
-      });
-    });
-
-    group('toString()', () {
-      test('returns formatted string representation', () {
-        const fn = OffsetPositionFunction(12);
-        expect(fn.toString(), equals('OffsetPositionFunction [12]'));
       });
     });
   });

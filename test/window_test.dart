@@ -1,9 +1,14 @@
 import 'package:test/test.dart';
 import 'package:very_commons/very_commons.dart';
 
+ScrollPosition defaultPositionFunction(int index) => OffsetScrollPosition.of(10 + index);
+ScrollPosition zeroPositionFunction(int index) => OffsetScrollPosition.of(index);
+ScrollPosition posFn5(int index) => OffsetScrollPosition.of(5 + index);
+ScrollPosition posFn20(int index) => OffsetScrollPosition.of(20 + index);
+
 void main() {
   group('Window', () {
-    const positionFunction = OffsetPositionFunction(10);
+    const positionFunction = defaultPositionFunction;
 
     group('Window.from constructor and default values', () {
       test('creates Window with default hasNext false', () {
@@ -29,6 +34,21 @@ void main() {
         expect(window.content, isEmpty);
         expect(window.hasNext, isFalse);
         expect(window.isLast, isTrue);
+      });
+
+      test('creates Window with lambda positionFunction', () {
+        final window = Window.from(['x', 'y'], (i) => OffsetScrollPosition.of(100 + i));
+
+        expect(window.content, equals(['x', 'y']));
+        expect((window.positionAt(0) as OffsetScrollPosition).offset, equals(100));
+        expect((window.positionAt(1) as OffsetScrollPosition).offset, equals(101));
+      });
+
+      test('creates Window with OffsetScrollPosition.positionFunction', () {
+        final window = Window.from(['x', 'y'], OffsetScrollPosition.positionFunction(50));
+
+        expect((window.positionAt(0) as OffsetScrollPosition).offset, equals(50));
+        expect((window.positionAt(1) as OffsetScrollPosition).offset, equals(51));
       });
     });
 
@@ -59,7 +79,7 @@ void main() {
 
     group('positionAt()', () {
       test('returns correct ScrollPosition for valid index', () {
-        const window = Window.from(['first', 'second', 'third'], OffsetPositionFunction(5));
+        const window = Window.from(['first', 'second', 'third'], posFn5);
 
         final pos0 = window.positionAt(0);
         final pos1 = window.positionAt(1);
@@ -128,7 +148,7 @@ void main() {
 
     group('positionOf()', () {
       test('returns ScrollPosition of item present in window', () {
-        const window = Window.from(['alpha', 'beta', 'gamma'], OffsetPositionFunction(20));
+        const window = Window.from(['alpha', 'beta', 'gamma'], posFn20);
 
         final posBeta = window.positionOf('beta');
         expect((posBeta as OffsetScrollPosition).offset, equals(21));
@@ -138,7 +158,7 @@ void main() {
       });
 
       test('returns position of the first occurrence when duplicates exist', () {
-        const window = Window.from(['dup', 'other', 'dup'], OffsetPositionFunction(0));
+        const window = Window.from(['dup', 'other', 'dup'], zeroPositionFunction);
 
         final pos = window.positionOf('dup');
         expect((pos as OffsetScrollPosition).offset, equals(0));
@@ -158,7 +178,7 @@ void main() {
 
     group('map()', () {
       test('transforms content elements while preserving positionFunction and hasNext', () {
-        const window = Window.from([1, 2, 3], OffsetPositionFunction(5), hasNext: true);
+        const window = Window.from([1, 2, 3], posFn5, hasNext: true);
 
         final mapped = window.map((n) => 'num_$n');
 
@@ -184,22 +204,31 @@ void main() {
 
     group('operator == and hashCode', () {
       test('correctly evaluates equality and consistent hashCode', () {
-        const w1 = Window.from(['a', 'b'], OffsetPositionFunction(0), hasNext: false);
-        const w2 = Window.from(['a', 'b'], OffsetPositionFunction(0), hasNext: false);
-        const wDiffContent = Window.from(['a', 'c'], OffsetPositionFunction(0), hasNext: false);
-        const wDiffLength = Window.from(['a'], OffsetPositionFunction(0), hasNext: false);
-        const wDiffFn = Window.from(['a', 'b'], OffsetPositionFunction(1), hasNext: false);
-        const wDiffHasNext = Window.from(['a', 'b'], OffsetPositionFunction(0), hasNext: true);
+        const w1 = Window.from(['a', 'b'], zeroPositionFunction, hasNext: false);
+        const w2 = Window.from(['a', 'b'], zeroPositionFunction, hasNext: false);
+        const wDiffContent = Window.from(['a', 'c'], zeroPositionFunction, hasNext: false);
+        const wDiffLength = Window.from(['a'], zeroPositionFunction, hasNext: false);
+        const wDiffFn = Window.from(['a', 'b'], defaultPositionFunction, hasNext: false);
+        const wDiffHasNext = Window.from(['a', 'b'], zeroPositionFunction, hasNext: true);
 
         expect(w1 == w1, isTrue);
         expect(w1 == w2, isTrue);
+        expect(w1 == wDiffFn, isTrue);
         expect(w1.hashCode, equals(w2.hashCode));
+        expect(w1.hashCode, equals(wDiffFn.hashCode));
 
         expect(w1 == wDiffContent, isFalse);
         expect(w1 == wDiffLength, isFalse);
-        expect(w1 == wDiffFn, isFalse);
         expect(w1 == wDiffHasNext, isFalse);
         expect(w1 == Object(), isFalse);
+      });
+
+      test('windows with different position functions are equal if content and hasNext match', () {
+        final wA = Window.from(['a', 'b'], (i) => OffsetScrollPosition.of(i));
+        final wB = Window.from(['a', 'b'], (i) => OffsetScrollPosition.of(100 + i));
+
+        expect(wA == wB, isTrue);
+        expect(wA.hashCode, equals(wB.hashCode));
       });
     });
 

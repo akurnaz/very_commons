@@ -16,35 +16,6 @@ abstract class ScrollPosition {
   }
 }
 
-final class OffsetPositionFunction {
-  static const OffsetPositionFunction zero = OffsetPositionFunction(0);
-
-  final int startOffset;
-
-  const OffsetPositionFunction(this.startOffset);
-
-  OffsetScrollPosition apply(int offset) {
-    if (offset < 0) {
-      throw RangeError.value(offset, 'offset', 'Offset must not be negative');
-    }
-
-    return OffsetScrollPosition.of(startOffset + offset);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is OffsetPositionFunction && other.startOffset == startOffset;
-  }
-
-  @override
-  int get hashCode => startOffset.hashCode;
-
-  @override
-  String toString() => 'OffsetPositionFunction [$startOffset]';
-}
-
 /// A [ScrollPosition] based on the offsets within query results.
 ///
 /// An initial [OffsetScrollPosition] does not point to a specific element and is
@@ -71,16 +42,23 @@ final class OffsetScrollPosition implements ScrollPosition {
   /// Returns a position function starting at [startOffset].
   ///
   /// The [startOffset] must not be negative.
-  static OffsetPositionFunction positionFunction(int startOffset) {
+  static OffsetScrollPosition Function(int offset) positionFunction(int startOffset) {
     if (startOffset < 0) {
       throw RangeError.value(startOffset, 'startOffset', 'Start offset must not be negative');
     }
 
-    return startOffset == 0 ? OffsetPositionFunction.zero : OffsetPositionFunction(startOffset);
+    return (offset) {
+      if (offset < 0) {
+        throw RangeError.value(offset, 'offset', 'Offset must not be negative');
+      }
+
+      return OffsetScrollPosition.of(startOffset + offset);
+    };
   }
 
   /// Returns the position function starting after the current [offset].
-  OffsetPositionFunction get nextPositionFunction => positionFunction(_offset + 1);
+  OffsetScrollPosition Function(int offset) get nextPositionFunction =>
+      positionFunction(_offset + 1);
 
   /// The zero or positive offset.
   ///

@@ -13,7 +13,7 @@ abstract class Window<T> {
   /// Construct a [Window].
   const factory Window.from(
     List<T> items,
-    OffsetPositionFunction positionFunction, {
+    ScrollPosition Function(int index) positionFunction, {
     bool hasNext,
   }) = _WindowImpl<T>;
 
@@ -64,7 +64,7 @@ abstract class Window<T> {
 class _WindowImpl<T> extends Window<T> {
   final List<T> _items;
 
-  final OffsetPositionFunction _positionFunction;
+  final ScrollPosition Function(int index) _positionFunction;
 
   @override
   final bool hasNext;
@@ -80,7 +80,7 @@ class _WindowImpl<T> extends Window<T> {
       throw RangeError.index(index, _items, 'index');
     }
 
-    return _positionFunction.apply(index);
+    return _positionFunction(index);
   }
 
   @override
@@ -100,14 +100,13 @@ class _WindowImpl<T> extends Window<T> {
       }
     }
 
-    if (_positionFunction != other._positionFunction) return false;
     if (hasNext != other.hasNext) return false;
 
     return true;
   }
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(_items), _positionFunction, hasNext);
+  int get hashCode => Object.hash(Object.hashAll(_items), hasNext);
 
   @override
   String toString() => 'Window $_items';
