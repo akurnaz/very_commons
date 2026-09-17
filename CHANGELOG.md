@@ -6,6 +6,7 @@
 - Added `orders` property to `Sort`.
 - Removed `Iterable<T>` inheritance from `Slice`.
 - Removed `iterator` from `Chunk`.
+- Introduced `ScrollPosition`, `OffsetScrollPosition`, and `Window`.
 
 ## 0.4.0
 
