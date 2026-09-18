@@ -206,16 +206,16 @@ void main() {
 
     group('polymorphism and cross-type equality', () {
       test('different types of scroll positions are not equal', () {
-        final offsetInit = ScrollPosition.offset();
-        final keysetInit = ScrollPosition.keyset();
+        final ScrollPosition offsetInit = ScrollPosition.offset();
+        final ScrollPosition keysetInit = ScrollPosition.keyset();
 
         expect(offsetInit == keysetInit, isFalse);
         expect(keysetInit == offsetInit, isFalse);
       });
 
       test('offset position is not equal to keyset position with same numeric data', () {
-        final offsetPos = ScrollPosition.offset(5);
-        final keysetPos = ScrollPosition.forward({'offset': 5});
+        final ScrollPosition offsetPos = ScrollPosition.offset(5);
+        final ScrollPosition keysetPos = ScrollPosition.forward({'offset': 5});
 
         expect(offsetPos == keysetPos, isFalse);
       });
