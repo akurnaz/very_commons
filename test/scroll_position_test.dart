@@ -519,6 +519,62 @@ void main() {
         expect(pos0.keys, equals({'id': 101, 'score': 90}));
         expect(pos0.direction, equals(ScrollDirection.backward));
       });
+
+      test('extracts values from nested maps using dot-separated property paths', () {
+        final nestedItems = [
+          {
+            'id': 1,
+            'author': {
+              'name': 'George Orwell',
+              'address': {'city': 'London'},
+            },
+          },
+          {
+            'id': 2,
+            'author': {'name': 'Aldous Huxley', 'address': null},
+          },
+          {'id': 3, 'author': null},
+        ];
+        final nestedSort = Sort.by(['id', 'author.name', 'author.address.city']);
+
+        final fn = KeysetScrollPosition.positionFunction(
+          nestedItems,
+          nestedSort,
+          ScrollDirection.forward,
+        );
+
+        final pos0 = fn(0);
+        expect(
+          pos0.keys,
+          equals({'id': 1, 'author.name': 'George Orwell', 'author.address.city': 'London'}),
+        );
+
+        final pos1 = fn(1);
+        expect(
+          pos1.keys,
+          equals({'id': 2, 'author.name': 'Aldous Huxley', 'author.address.city': null}),
+        );
+
+        final pos2 = fn(2);
+        expect(pos2.keys, equals({'id': 3, 'author.name': null, 'author.address.city': null}));
+      });
+
+      test('prioritizes direct key match when map contains key with dot', () {
+        final itemsWithDotKey = [
+          {
+            'author.name': 'Direct Match',
+            'author': {'name': 'Nested Value'},
+          },
+        ];
+        final sort = Sort.by(['author.name']);
+        final fn = KeysetScrollPosition.positionFunction(
+          itemsWithDotKey,
+          sort,
+          ScrollDirection.forward,
+        );
+
+        expect(fn(0).keys, equals({'author.name': 'Direct Match'}));
+      });
     });
 
     group('getNextPositionFunction()', () {

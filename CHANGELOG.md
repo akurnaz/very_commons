@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Added support for nested maps and dot-separated property paths in `KeysetScrollPosition.positionFunction`.
+
 ## 0.5.0
 
 - Removed `Iterable<Order>` inheritance from `Sort`.

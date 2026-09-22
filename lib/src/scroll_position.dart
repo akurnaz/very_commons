@@ -172,10 +172,30 @@ final class KeysetScrollPosition implements ScrollPosition {
   ) {
     return (index) {
       final item = items[index];
-      final keys = {for (final order in sort.orders) order.property: item[order.property]};
+      final keys = {
+        for (final order in sort.orders) order.property: _extractValue(item, order.property),
+      };
 
       return KeysetScrollPosition.of(keys, direction);
     };
+  }
+
+  static dynamic _extractValue(Map<String, dynamic> item, String property) {
+    if (item.containsKey(property)) {
+      return item[property];
+    }
+    if (!property.contains('.')) {
+      return null;
+    }
+    dynamic current = item;
+    for (final part in property.split('.')) {
+      if (current is Map) {
+        current = current[part];
+      } else {
+        return null;
+      }
+    }
+    return current;
   }
 
   KeysetScrollPosition Function(int index) getNextPositionFunction(
