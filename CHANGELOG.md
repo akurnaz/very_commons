@@ -6,6 +6,7 @@
 - Added `cursor` factory method to `ScrollPosition`.
 - Removed `forward`, `backward`, and `of` factory methods from `ScrollPosition`.
 - Updated `ScrollPosition.keyset` factory method to accept optional named `keys` and `direction` parameters.
+- Updated `OffsetScrollPosition.of` to accept an optional `offset` parameter and return the initial position when omitted or `null`.
 
 ## 0.5.1
 

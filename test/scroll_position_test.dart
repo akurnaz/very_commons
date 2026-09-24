@@ -253,6 +253,22 @@ void main() {
         expect(position.offset, equals(0));
       });
 
+      test('creates initial position when offset is omitted', () {
+        final position = OffsetScrollPosition.of();
+
+        expect(position.isInitial, isTrue);
+        expect(() => position.offset, throwsStateError);
+        expect(identical(position, OffsetScrollPosition.initial()), isTrue);
+      });
+
+      test('creates initial position when offset is null', () {
+        final position = OffsetScrollPosition.of(null);
+
+        expect(position.isInitial, isTrue);
+        expect(() => position.offset, throwsStateError);
+        expect(identical(position, OffsetScrollPosition.initial()), isTrue);
+      });
+
       test('throws RangeError when offset is negative', () {
         expect(
           () => OffsetScrollPosition.of(-1),

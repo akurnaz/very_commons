@@ -24,9 +24,7 @@ abstract class ScrollPosition {
   /// start scrolling using offset / limit.
   ///
   /// Otherwise, creates a new [OffsetScrollPosition] with the given [offset].
-  static OffsetScrollPosition offset([int? offset]) {
-    return offset == null ? OffsetScrollPosition.initial() : OffsetScrollPosition.of(offset);
-  }
+  static OffsetScrollPosition offset([int? offset]) => OffsetScrollPosition.of(offset);
 
   /// Creates a new [ScrollPosition] from an optional [keys] and [direction].
   ///
@@ -66,10 +64,17 @@ final class OffsetScrollPosition implements ScrollPosition {
   /// Creates a new initial [OffsetScrollPosition] to start scrolling using offset / limit.
   factory OffsetScrollPosition.initial() => _initial;
 
-  /// Creates a new [OffsetScrollPosition] from an [offset].
+  /// Creates a new [OffsetScrollPosition] from an optional [offset].
+  ///
+  /// If [offset] is omitted or `null`, creates an initial [OffsetScrollPosition].
+  /// Otherwise, creates an [OffsetScrollPosition] with the given [offset].
   ///
   /// The [offset] must not be negative.
-  factory OffsetScrollPosition.of(int offset) {
+  factory OffsetScrollPosition.of([int? offset]) {
+    if (offset == null) {
+      return _initial;
+    }
+
     if (offset < 0) {
       throw RangeError.value(offset, 'offset', 'Offset must not be negative');
     }
