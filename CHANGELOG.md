@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 0.6.0
 
 - Added `CursorScrollPosition` class for cursor-based pagination.
 - Added `cursor` factory method to `ScrollPosition`.
