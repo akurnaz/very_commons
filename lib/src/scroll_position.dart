@@ -31,14 +31,6 @@ abstract class ScrollPosition {
     return offset == null ? OffsetScrollPosition.initial() : OffsetScrollPosition.of(offset);
   }
 
-  /// Creates a new [ScrollPosition] from a key set scrolling forward.
-  static KeysetScrollPosition forward(Map<String, dynamic> keys) =>
-      KeysetScrollPosition.of(keys, ScrollDirection.forward);
-
-  /// Creates a new [ScrollPosition] from a key set scrolling backward.
-  static KeysetScrollPosition backward(Map<String, dynamic> keys) =>
-      KeysetScrollPosition.of(keys, ScrollDirection.backward);
-
   /// Creates a new [ScrollPosition] from a key set and [ScrollDirection].
   static KeysetScrollPosition of(
     Map<String, dynamic> keys, [
@@ -254,4 +246,131 @@ final class KeysetScrollPosition implements ScrollPosition {
 
   @override
   String toString() => 'KeysetScrollPosition [$direction, $keys]';
+}
+
+/// A [ScrollPosition] based on an opaque cursor string pointing to a specific
+/// element in a query result.
+final class CursorScrollPosition implements ScrollPosition {
+  static const CursorScrollPosition _emptyForward = CursorScrollPosition._(
+    null,
+    ScrollDirection.forward,
+  );
+
+  static const CursorScrollPosition _emptyBackward = CursorScrollPosition._(
+    null,
+    ScrollDirection.backward,
+  );
+
+  final String? _cursor;
+
+  /// The scroll direction.
+  final ScrollDirection direction;
+
+  const CursorScrollPosition._(this._cursor, this.direction);
+
+  /// Creates a new initial [CursorScrollPosition] to start scrolling using cursor-based pagination.
+  factory CursorScrollPosition.initial() => _emptyForward;
+
+  /// Creates a new [CursorScrollPosition] from an optional [cursor] and [ScrollDirection].
+  ///
+  /// If [cursor] is omitted or `null`, creates an initial [CursorScrollPosition]
+  /// with the specified [direction].
+  factory CursorScrollPosition.of(
+    String? cursor, [
+    ScrollDirection direction = ScrollDirection.forward,
+  ]) {
+    return cursor == null
+        ? (direction == ScrollDirection.forward ? _emptyForward : _emptyBackward)
+        : CursorScrollPosition._(cursor, direction);
+  }
+
+  /// Returns a position function that resolves [CursorScrollPosition]s for boundary items.
+  ///
+  /// The returned function extracts [beforeCursor] when [index] is `0` and
+  /// [afterCursor] when [index] is `itemCount - 1`.
+  ///
+  /// Throws a [RangeError] if [index] is not `0` or `itemCount - 1`, or if no
+  /// cursor is available for the requested index.
+  static CursorScrollPosition Function(int index) positionFunction(
+    int itemCount,
+    ScrollDirection direction, {
+    String? beforeCursor,
+    String? afterCursor,
+  }) {
+    final lastIndex = itemCount - 1;
+
+    return (index) {
+      if (beforeCursor != null && index == 0) {
+        return CursorScrollPosition.of(beforeCursor, direction);
+      }
+
+      if (afterCursor != null && index == lastIndex) {
+        return CursorScrollPosition.of(afterCursor, direction);
+      }
+
+      throw RangeError.value(
+        index,
+        'index',
+        beforeCursor == null && afterCursor == null
+            ? 'No cursor is available for this window'
+            : 'Cursor is only available for index 0 or $lastIndex',
+      );
+    };
+  }
+
+  /// Returns a position function using the current [direction] to resolve [CursorScrollPosition]s.
+  CursorScrollPosition Function(int index) getPositionFunction(
+    int itemCount, {
+    String? beforeCursor,
+    String? afterCursor,
+  }) =>
+      positionFunction(itemCount, direction, beforeCursor: beforeCursor, afterCursor: afterCursor);
+
+  /// The cursor string.
+  ///
+  /// An [isInitial] position does not define a cursor and will throw a [StateError].
+  String get cursor {
+    if (_cursor == null) {
+      throw StateError('Initial state does not have a cursor. Make sure to check isInitial.');
+    }
+
+    return _cursor;
+  }
+
+  /// Returns whether the current [CursorScrollPosition] scrolls forward.
+  bool get scrollsForward => direction == ScrollDirection.forward;
+
+  /// Returns whether the current [CursorScrollPosition] scrolls backward.
+  bool get scrollsBackward => direction == ScrollDirection.backward;
+
+  /// Returns a [CursorScrollPosition] based on the same cursor and scrolling forward.
+  CursorScrollPosition get forward => direction == ScrollDirection.forward
+      ? this
+      : CursorScrollPosition._(_cursor, ScrollDirection.forward);
+
+  /// Returns a [CursorScrollPosition] based on the same cursor and scrolling backward.
+  CursorScrollPosition get backward => direction == ScrollDirection.backward
+      ? this
+      : CursorScrollPosition._(_cursor, ScrollDirection.backward);
+
+  /// Returns a new [CursorScrollPosition] with the direction reversed.
+  CursorScrollPosition get reverse => CursorScrollPosition._(_cursor, direction.reverse);
+
+  @override
+  bool get isInitial => _cursor == null;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is CursorScrollPosition &&
+        _cursor == other._cursor &&
+        direction == other.direction;
+  }
+
+  @override
+  int get hashCode => Object.hash(_cursor, direction);
+
+  @override
+  String toString() => 'CursorScrollPosition [$direction, $_cursor]';
 }

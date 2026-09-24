@@ -66,72 +66,6 @@ void main() {
       });
     });
 
-    group('ScrollPosition.forward()', () {
-      test('creates keyset scroll position scrolling forward with given keys', () {
-        final keys = {'id': 1, 'name': 'Alice'};
-        final position = ScrollPosition.forward(keys);
-
-        expect(position, isA<ScrollPosition>());
-        expect(position, isA<KeysetScrollPosition>());
-        expect(position.isInitial, isFalse);
-        expect(position.keys, equals(keys));
-        expect(position.direction, equals(ScrollDirection.forward));
-        expect(position.scrollsForward, isTrue);
-        expect(position.scrollsBackward, isFalse);
-        expect(position, equals(ScrollPosition.of(keys, ScrollDirection.forward)));
-      });
-
-      test('creates initial keyset scroll position when keys are empty', () {
-        final position = ScrollPosition.forward({});
-
-        expect(position.isInitial, isTrue);
-        expect(position.direction, equals(ScrollDirection.forward));
-        expect(position, equals(KeysetScrollPosition.initial()));
-      });
-
-      test('creates unmodifiable defensive copy of keys', () {
-        final map = {'id': 1};
-        final position = ScrollPosition.forward(map);
-        map['id'] = 2;
-
-        expect(position.keys['id'], equals(1));
-        expect(() => position.keys['newKey'] = 'val', throwsUnsupportedError);
-      });
-    });
-
-    group('ScrollPosition.backward()', () {
-      test('creates keyset scroll position scrolling backward with given keys', () {
-        final keys = {'id': 1, 'name': 'Alice'};
-        final position = ScrollPosition.backward(keys);
-
-        expect(position, isA<ScrollPosition>());
-        expect(position, isA<KeysetScrollPosition>());
-        expect(position.isInitial, isFalse);
-        expect(position.keys, equals(keys));
-        expect(position.direction, equals(ScrollDirection.backward));
-        expect(position.scrollsForward, isFalse);
-        expect(position.scrollsBackward, isTrue);
-        expect(position, equals(ScrollPosition.of(keys, ScrollDirection.backward)));
-      });
-
-      test('creates initial backward keyset scroll position when keys are empty', () {
-        final position = ScrollPosition.backward({});
-
-        expect(position.isInitial, isTrue);
-        expect(position.direction, equals(ScrollDirection.backward));
-        expect(position, equals(KeysetScrollPosition.of({}, ScrollDirection.backward)));
-      });
-
-      test('creates unmodifiable defensive copy of keys', () {
-        final map = {'id': 1};
-        final position = ScrollPosition.backward(map);
-        map['id'] = 2;
-
-        expect(position.keys['id'], equals(1));
-        expect(() => position.keys['newKey'] = 'val', throwsUnsupportedError);
-      });
-    });
-
     group('ScrollPosition.of()', () {
       test('creates keyset scroll position with default forward direction', () {
         final keys = {'id': 42};
@@ -142,7 +76,7 @@ void main() {
         expect(position.isInitial, isFalse);
         expect(position.keys, equals(keys));
         expect(position.direction, equals(ScrollDirection.forward));
-        expect(position, equals(ScrollPosition.forward(keys)));
+        expect(position, equals(KeysetScrollPosition.of(keys, ScrollDirection.forward)));
       });
 
       test('creates keyset scroll position with specified backward direction', () {
@@ -154,7 +88,7 @@ void main() {
         expect(position.isInitial, isFalse);
         expect(position.keys, equals(keys));
         expect(position.direction, equals(ScrollDirection.backward));
-        expect(position, equals(ScrollPosition.backward(keys)));
+        expect(position, equals(KeysetScrollPosition.of(keys, ScrollDirection.backward)));
       });
 
       test('creates initial position when keys are empty with forward direction', () {
@@ -188,19 +122,20 @@ void main() {
         expect(ScrollPosition.offset().isInitial, isTrue);
         expect(ScrollPosition.offset(null).isInitial, isTrue);
         expect(ScrollPosition.keyset().isInitial, isTrue);
-        expect(ScrollPosition.forward({}).isInitial, isTrue);
-        expect(ScrollPosition.backward({}).isInitial, isTrue);
         expect(ScrollPosition.of({}).isInitial, isTrue);
         expect(ScrollPosition.of({}, ScrollDirection.backward).isInitial, isTrue);
+        expect(CursorScrollPosition.initial().isInitial, isTrue);
+        expect(CursorScrollPosition.of(null).isInitial, isTrue);
+        expect(CursorScrollPosition.of(null, ScrollDirection.backward).isInitial, isTrue);
       });
 
       test('returns false for non-initial positions across all types', () {
         expect(ScrollPosition.offset(0).isInitial, isFalse);
         expect(ScrollPosition.offset(10).isInitial, isFalse);
-        expect(ScrollPosition.forward({'id': 1}).isInitial, isFalse);
-        expect(ScrollPosition.backward({'id': 1}).isInitial, isFalse);
         expect(ScrollPosition.of({'id': 1}).isInitial, isFalse);
         expect(ScrollPosition.of({'id': 1}, ScrollDirection.backward).isInitial, isFalse);
+        expect(CursorScrollPosition.of('token').isInitial, isFalse);
+        expect(CursorScrollPosition.of('token', ScrollDirection.backward).isInitial, isFalse);
       });
     });
 
@@ -208,16 +143,24 @@ void main() {
       test('different types of scroll positions are not equal', () {
         final ScrollPosition offsetInit = ScrollPosition.offset();
         final ScrollPosition keysetInit = ScrollPosition.keyset();
+        final ScrollPosition cursorInit = CursorScrollPosition.initial();
 
         expect(offsetInit == keysetInit, isFalse);
+        expect(offsetInit == cursorInit, isFalse);
         expect(keysetInit == offsetInit, isFalse);
+        expect(keysetInit == cursorInit, isFalse);
+        expect(cursorInit == offsetInit, isFalse);
+        expect(cursorInit == keysetInit, isFalse);
       });
 
-      test('offset position is not equal to keyset position with same numeric data', () {
+      test('offset position is not equal to keyset or cursor position with same data representation', () {
         final ScrollPosition offsetPos = ScrollPosition.offset(5);
-        final ScrollPosition keysetPos = ScrollPosition.forward({'offset': 5});
+        final ScrollPosition keysetPos = ScrollPosition.of({'offset': 5});
+        final ScrollPosition cursorPos = CursorScrollPosition.of('5');
 
         expect(offsetPos == keysetPos, isFalse);
+        expect(offsetPos == cursorPos, isFalse);
+        expect(keysetPos == cursorPos, isFalse);
       });
     });
   });
@@ -710,6 +653,362 @@ void main() {
       test('returns formatted string representation', () {
         final pos = KeysetScrollPosition.of({'id': 42}, ScrollDirection.forward);
         expect(pos.toString(), equals('KeysetScrollPosition [ScrollDirection.forward, {id: 42}]'));
+      });
+    });
+  });
+
+  group('CursorScrollPosition', () {
+    group('initial()', () {
+      test('creates initial forward scroll position with null cursor', () {
+        final position = CursorScrollPosition.initial();
+
+        expect(position.isInitial, isTrue);
+        expect(position.direction, equals(ScrollDirection.forward));
+        expect(position.scrollsForward, isTrue);
+        expect(position.scrollsBackward, isFalse);
+        expect(() => position.cursor, throwsStateError);
+        expect(identical(position, CursorScrollPosition.initial()), isTrue);
+      });
+    });
+
+    group('of()', () {
+      test('returns cached empty forward when cursor is null and default direction', () {
+        final position = CursorScrollPosition.of(null);
+
+        expect(position.isInitial, isTrue);
+        expect(position.direction, equals(ScrollDirection.forward));
+        expect(position.scrollsForward, isTrue);
+        expect(position.scrollsBackward, isFalse);
+        expect(identical(position, CursorScrollPosition.initial()), isTrue);
+      });
+
+      test('returns cached empty backward when cursor is null and backward direction', () {
+        final position = CursorScrollPosition.of(null, ScrollDirection.backward);
+
+        expect(position.isInitial, isTrue);
+        expect(position.direction, equals(ScrollDirection.backward));
+        expect(position.scrollsForward, isFalse);
+        expect(position.scrollsBackward, isTrue);
+      });
+
+      test('creates position with given cursor and default forward direction', () {
+        final position = CursorScrollPosition.of('cursor_123');
+
+        expect(position.isInitial, isFalse);
+        expect(position.cursor, equals('cursor_123'));
+        expect(position.direction, equals(ScrollDirection.forward));
+        expect(position.scrollsForward, isTrue);
+        expect(position.scrollsBackward, isFalse);
+      });
+
+      test('creates position with given cursor and backward direction', () {
+        final position = CursorScrollPosition.of('cursor_123', ScrollDirection.backward);
+
+        expect(position.isInitial, isFalse);
+        expect(position.cursor, equals('cursor_123'));
+        expect(position.direction, equals(ScrollDirection.backward));
+        expect(position.scrollsForward, isFalse);
+        expect(position.scrollsBackward, isTrue);
+      });
+    });
+
+    group('cursor getter', () {
+      test('returns cursor when non-null', () {
+        final position = CursorScrollPosition.of('valid_cursor');
+        expect(position.cursor, equals('valid_cursor'));
+      });
+
+      test('throws StateError when initial (cursor is null)', () {
+        final position = CursorScrollPosition.initial();
+        expect(
+          () => position.cursor,
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              'Initial state does not have a cursor. Make sure to check isInitial.',
+            ),
+          ),
+        );
+      });
+    });
+
+    group('direction navigation', () {
+      test('forward returns same instance if already forward', () {
+        final position = CursorScrollPosition.of('cur_abc', ScrollDirection.forward);
+        expect(identical(position.forward, position), isTrue);
+      });
+
+      test('forward returns new instance scrolling forward if currently backward', () {
+        final position = CursorScrollPosition.of('cur_abc', ScrollDirection.backward);
+        final forwardPos = position.forward;
+
+        expect(forwardPos.direction, equals(ScrollDirection.forward));
+        expect(forwardPos.cursor, equals('cur_abc'));
+        expect(forwardPos.scrollsForward, isTrue);
+      });
+
+      test('backward returns same instance if already backward', () {
+        final position = CursorScrollPosition.of('cur_abc', ScrollDirection.backward);
+        expect(identical(position.backward, position), isTrue);
+      });
+
+      test('backward returns new instance scrolling backward if currently forward', () {
+        final position = CursorScrollPosition.of('cur_abc', ScrollDirection.forward);
+        final backwardPos = position.backward;
+
+        expect(backwardPos.direction, equals(ScrollDirection.backward));
+        expect(backwardPos.cursor, equals('cur_abc'));
+        expect(backwardPos.scrollsBackward, isTrue);
+      });
+
+      test('reverse toggles forward to backward', () {
+        final position = CursorScrollPosition.of('cur_abc', ScrollDirection.forward);
+        final reversed = position.reverse;
+
+        expect(reversed.direction, equals(ScrollDirection.backward));
+        expect(reversed.cursor, equals('cur_abc'));
+      });
+
+      test('reverse toggles backward to forward', () {
+        final position = CursorScrollPosition.of('cur_abc', ScrollDirection.backward);
+        final reversed = position.reverse;
+
+        expect(reversed.direction, equals(ScrollDirection.forward));
+        expect(reversed.cursor, equals('cur_abc'));
+      });
+
+      test('navigation methods work on initial positions', () {
+        final initial = CursorScrollPosition.initial();
+        expect(identical(initial.forward, initial), isTrue);
+
+        final backwardInitial = initial.backward;
+        expect(backwardInitial.isInitial, isTrue);
+        expect(backwardInitial.direction, equals(ScrollDirection.backward));
+
+        final reversedInitial = initial.reverse;
+        expect(reversedInitial.isInitial, isTrue);
+        expect(reversedInitial.direction, equals(ScrollDirection.backward));
+      });
+    });
+
+    group('positionFunction()', () {
+      test('resolves beforeCursor for index 0 and afterCursor for last index', () {
+        final fn = CursorScrollPosition.positionFunction(
+          5,
+          ScrollDirection.forward,
+          beforeCursor: 'start_cursor',
+          afterCursor: 'end_cursor',
+        );
+
+        final firstPos = fn(0);
+        expect(firstPos.cursor, equals('start_cursor'));
+        expect(firstPos.direction, equals(ScrollDirection.forward));
+
+        final lastPos = fn(4);
+        expect(lastPos.cursor, equals('end_cursor'));
+        expect(lastPos.direction, equals(ScrollDirection.forward));
+      });
+
+      test('throws RangeError for middle index', () {
+        final fn = CursorScrollPosition.positionFunction(
+          5,
+          ScrollDirection.forward,
+          beforeCursor: 'start_cursor',
+          afterCursor: 'end_cursor',
+        );
+
+        expect(
+          () => fn(1),
+          throwsA(
+            isA<RangeError>().having(
+              (e) => e.message,
+              'message',
+              'Cursor is only available for index 0 or 4',
+            ),
+          ),
+        );
+        expect(() => fn(2), throwsRangeError);
+        expect(() => fn(3), throwsRangeError);
+      });
+
+      test('throws RangeError for negative index or index exceeding lastIndex', () {
+        final fn = CursorScrollPosition.positionFunction(
+          3,
+          ScrollDirection.forward,
+          beforeCursor: 'start_cursor',
+          afterCursor: 'end_cursor',
+        );
+
+        expect(() => fn(-1), throwsRangeError);
+        expect(() => fn(3), throwsRangeError);
+      });
+
+      test('handles only beforeCursor provided', () {
+        final fn = CursorScrollPosition.positionFunction(
+          3,
+          ScrollDirection.forward,
+          beforeCursor: 'only_before',
+        );
+
+        expect(fn(0).cursor, equals('only_before'));
+        expect(() => fn(2), throwsRangeError);
+      });
+
+      test('handles only afterCursor provided', () {
+        final fn = CursorScrollPosition.positionFunction(
+          3,
+          ScrollDirection.forward,
+          afterCursor: 'only_after',
+        );
+
+        expect(() => fn(0), throwsRangeError);
+        expect(fn(2).cursor, equals('only_after'));
+      });
+
+      test('throws RangeError with custom message when neither cursor is provided', () {
+        final fn = CursorScrollPosition.positionFunction(
+          3,
+          ScrollDirection.forward,
+        );
+
+        expect(
+          () => fn(0),
+          throwsA(
+            isA<RangeError>().having(
+              (e) => e.message,
+              'message',
+              'No cursor is available for this window',
+            ),
+          ),
+        );
+        expect(
+          () => fn(2),
+          throwsA(
+            isA<RangeError>().having(
+              (e) => e.message,
+              'message',
+              'No cursor is available for this window',
+            ),
+          ),
+        );
+      });
+
+      test('handles single-item window correctly', () {
+        final fnBoth = CursorScrollPosition.positionFunction(
+          1,
+          ScrollDirection.forward,
+          beforeCursor: 'before_c',
+          afterCursor: 'after_c',
+        );
+        expect(fnBoth(0).cursor, equals('before_c'));
+
+        final fnAfterOnly = CursorScrollPosition.positionFunction(
+          1,
+          ScrollDirection.forward,
+          afterCursor: 'after_c',
+        );
+        expect(fnAfterOnly(0).cursor, equals('after_c'));
+      });
+
+      test('preserves direction in created positions', () {
+        final fn = CursorScrollPosition.positionFunction(
+          2,
+          ScrollDirection.backward,
+          beforeCursor: 'b',
+          afterCursor: 'a',
+        );
+
+        expect(fn(0).direction, equals(ScrollDirection.backward));
+        expect(fn(1).direction, equals(ScrollDirection.backward));
+      });
+    });
+
+    group('getPositionFunction()', () {
+      test('delegates to positionFunction with instance direction', () {
+        final position = CursorScrollPosition.of('current', ScrollDirection.backward);
+        final fn = position.getPositionFunction(
+          3,
+          beforeCursor: 'before_cur',
+          afterCursor: 'after_cur',
+        );
+
+        final firstPos = fn(0);
+        expect(firstPos.cursor, equals('before_cur'));
+        expect(firstPos.direction, equals(ScrollDirection.backward));
+
+        final lastPos = fn(2);
+        expect(lastPos.cursor, equals('after_cur'));
+        expect(lastPos.direction, equals(ScrollDirection.backward));
+      });
+    });
+
+    group('operator == and hashCode', () {
+      test('equals same values and has same hashCode', () {
+        final pos1 = CursorScrollPosition.of('abc', ScrollDirection.forward);
+        final pos2 = CursorScrollPosition.of('abc', ScrollDirection.forward);
+
+        expect(pos1 == pos2, isTrue);
+        expect(pos1.hashCode, equals(pos2.hashCode));
+      });
+
+      test('identical instances are equal', () {
+        final pos = CursorScrollPosition.of('abc');
+        expect(pos == pos, isTrue);
+      });
+
+      test('not equal when cursors differ', () {
+        final pos1 = CursorScrollPosition.of('abc');
+        final pos2 = CursorScrollPosition.of('xyz');
+
+        expect(pos1 == pos2, isFalse);
+      });
+
+      test('not equal when directions differ', () {
+        final pos1 = CursorScrollPosition.of('abc', ScrollDirection.forward);
+        final pos2 = CursorScrollPosition.of('abc', ScrollDirection.backward);
+
+        expect(pos1 == pos2, isFalse);
+      });
+
+      test('initial instances equality', () {
+        final initForward1 = CursorScrollPosition.initial();
+        final initForward2 = CursorScrollPosition.of(null);
+        final initBackward = CursorScrollPosition.of(null, ScrollDirection.backward);
+
+        expect(initForward1 == initForward2, isTrue);
+        expect(initForward1.hashCode, equals(initForward2.hashCode));
+        expect(initForward1 == initBackward, isFalse);
+      });
+
+      test('returns false when compared to other types', () {
+        final pos = CursorScrollPosition.of('abc');
+        final Object otherType = OffsetScrollPosition.of(0);
+        final Object keysetType = KeysetScrollPosition.of({'id': 1});
+
+        expect(pos == Object(), isFalse);
+        expect(pos == otherType, isFalse);
+        expect(pos == keysetType, isFalse);
+      });
+    });
+
+    group('toString()', () {
+      test('returns formatted string for forward position', () {
+        final pos = CursorScrollPosition.of('token_123', ScrollDirection.forward);
+        expect(pos.toString(), equals('CursorScrollPosition [ScrollDirection.forward, token_123]'));
+      });
+
+      test('returns formatted string for backward position', () {
+        final pos = CursorScrollPosition.of('token_123', ScrollDirection.backward);
+        expect(
+          pos.toString(),
+          equals('CursorScrollPosition [ScrollDirection.backward, token_123]'),
+        );
+      });
+
+      test('returns formatted string for initial position', () {
+        final pos = CursorScrollPosition.initial();
+        expect(pos.toString(), equals('CursorScrollPosition [ScrollDirection.forward, null]'));
       });
     });
   });

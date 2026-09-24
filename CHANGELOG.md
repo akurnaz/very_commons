@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Added `CursorScrollPosition` class for cursor-based pagination.
+- Removed `forward` and `backward` factory methods from `ScrollPosition`.
+
 ## 0.5.1
 
 - Added support for nested maps and dot-separated property paths in `KeysetScrollPosition.positionFunction`.
