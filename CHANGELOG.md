@@ -3,7 +3,9 @@
 ## [Unreleased]
 
 - Added `CursorScrollPosition` class for cursor-based pagination.
-- Removed `forward` and `backward` factory methods from `ScrollPosition`.
+- Added `cursor` factory method to `ScrollPosition`.
+- Removed `forward`, `backward`, and `of` factory methods from `ScrollPosition`.
+- Updated `ScrollPosition.keyset` factory method to accept optional named `keys` and `direction` parameters.
 
 ## 0.5.1
 

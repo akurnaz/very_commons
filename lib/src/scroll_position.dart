@@ -18,9 +18,6 @@ abstract class ScrollPosition {
   /// Returns whether the current scroll position is the initial one.
   bool get isInitial;
 
-  /// Creates a new initial [ScrollPosition] to start scrolling using keyset-queries.
-  static KeysetScrollPosition keyset() => KeysetScrollPosition.initial();
-
   /// Creates a new [ScrollPosition] from an optional [offset].
   ///
   /// If [offset] is omitted or `null`, creates an initial [ScrollPosition] to
@@ -31,11 +28,27 @@ abstract class ScrollPosition {
     return offset == null ? OffsetScrollPosition.initial() : OffsetScrollPosition.of(offset);
   }
 
-  /// Creates a new [ScrollPosition] from a key set and [ScrollDirection].
-  static KeysetScrollPosition of(
-    Map<String, dynamic> keys, [
+  /// Creates a new [ScrollPosition] from an optional [keys] and [direction].
+  ///
+  /// If [keys] is omitted or empty, creates an initial [ScrollPosition] to start
+  /// scrolling using keyset-queries.
+  ///
+  /// Otherwise, creates a new [KeysetScrollPosition] with the given [keys] and [direction].
+  static KeysetScrollPosition keyset({
+    Map<String, dynamic> keys = const {},
     ScrollDirection direction = ScrollDirection.forward,
-  ]) => KeysetScrollPosition.of(keys, direction);
+  }) => KeysetScrollPosition.of(keys, direction);
+
+  /// Creates a new [ScrollPosition] from an optional [cursor] and [direction].
+  ///
+  /// If [cursor] is omitted or `null`, creates an initial [ScrollPosition] to start
+  /// scrolling using cursor-based pagination.
+  ///
+  /// Otherwise, creates a new [CursorScrollPosition] with the given [cursor] and [direction].
+  static CursorScrollPosition cursor({
+    String? cursor,
+    ScrollDirection direction = ScrollDirection.forward,
+  }) => CursorScrollPosition.of(cursor, direction);
 }
 
 /// A [ScrollPosition] based on the offsets within query results.
